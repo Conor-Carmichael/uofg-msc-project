@@ -6,15 +6,13 @@ Pangolin/
 opencv-3.4.0/
 
 #Openvslam non personal folders
-openvslam/3rd/
-#Keep /build
-openvslam/cmake/
-openvslam/docs/
-openvslam/example/
-#Keep /ros folder
-openvslam/src/
-openvslam/test/
-openvslam/viewer/
+# will negate on some
+openvslam/*
+!openvslam/build/maps/
+!openvslam/build/msc-cam/
+!openvslam/ros/src/
+
+
 
 #Dont track the frames used to make videos
 Videos/frames/
