@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/conor/msc-project/openvslam/ros/install/setup.sh

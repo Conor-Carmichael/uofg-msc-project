@@ -1,0 +1,8 @@
+prefix=/home/conor/msc-project/openvslam/ros/devel
+
+Name: camera_processing
+Description: Description of camera_processing
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

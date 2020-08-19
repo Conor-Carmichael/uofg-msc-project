@@ -1,0 +1,716 @@
+<?xml version='1.0'?>
+<robot name="myrobot">
+  <!-- <xacro:include filename="$(find mybot_description)/urdf/mybot.gazebo" />
+  <xacro:include filename="$(find mybot_description)/urdf/materials.xacro" /> -->
+  <!-- <xacro:include filename="$(find mybot_description)/urdf/macros.xacro" /> -->
+  
+  <material name="black">
+    <color rgba="0.0 0.0 0.0 1.0"/>
+  </material>
+
+  <material name="blue">
+    <color rgba="0.0 0.0 0.8 1.0"/>
+  </material>
+
+  <material name="green">
+    <color rgba="0.0 0.8 0.0 1.0"/>
+  </material>
+
+  <material name="grey">
+    <color rgba="0.2 0.2 0.2 1.0"/>
+  </material>
+
+  <material name="orange">
+    <color rgba="${255/255} ${108/255} ${10/255} 1.0"/>
+  </material>
+
+  <material name="brown">
+    <color rgba="${222/255} ${207/255} ${195/255} 1.0"/>
+  </material>
+
+  <material name="red">
+    <color rgba="0.8 0.0 0.0 1.0"/>
+  </material>
+
+  <material name="white">
+    <color rgba="1.0 1.0 1.0 1.0"/>
+  </material>
+
+  <link name='chassis'>
+    <pose>0 0 1 0 0 0</pose>
+
+    <inertial>
+      <mass value="10.0"/>
+      <origin xyz="0.0 0 0.1" rpy=" 0 0 0"/>
+      <inertia
+          ixx="0.5" ixy="0" ixz="0"
+          iyy="1.0" iyz="0"
+          izz="0.1"
+      />
+    </inertial>
+
+    <collision name='collision'>
+      <geometry>
+        <box size=".4 .2 .1"/>
+      </geometry>
+    </collision>
+
+    <visual name='chassis_visual'>
+      <origin xyz="0 0 0" rpy=" 0 0 0"/>
+      <geometry>
+        <box size=".4 .2 .1"/>
+      </geometry>
+    </visual>
+
+
+    <collision name='caster_collision'>
+      <origin xyz="-0.15 0 -0.05" rpy=" 0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+      <surface>
+        <friction>
+          <ode>
+            <mu>0</mu>
+            <mu2>0</mu2>
+            <slip1>1.0</slip1>
+            <slip2>1.0</slip2>
+          </ode>
+        </friction>
+      </surface>
+    </collision>
+
+    <visual name='caster_visual'>
+      <origin xyz="-0.15 0 -0.05" rpy=" 0 0 0"/>
+      <geometry>
+        <sphere radius="0.05"/>
+      </geometry>
+    </visual>
+  </link>
+
+
+  <link name="left_wheel">
+    <!--origin xyz="0.1 0.13 0.1" rpy="0 1.5707 1.5707"/-->
+    <collision name="collision">
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <geometry>
+        <cylinder radius="0.1" length="0.05"/>
+      </geometry>
+    </collision>
+    <visual name="left_wheel_visual">
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <geometry>
+        <cylinder radius="0.1" length="0.05"/>
+      </geometry>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <mass value="5"/>
+      <cylinder_inertia m="5" r="0.1" h="0.05"/>
+      <inertia
+        ixx="1.0" ixy="0.0" ixz="0.0"
+        iyy="1.0" iyz="0.0"
+        izz="1.0"/>
+    </inertial>
+  </link>
+
+  <link name="right_wheel">
+    <!--origin xyz="0.1 -0.13 0.1" rpy="0 1.5707 1.5707"/-->
+    <collision name="collision">
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <geometry>
+        <cylinder radius="0.1" length="0.05"/>
+      </geometry>
+    </collision>
+    <visual name="right_wheel_visual">
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <geometry>
+        <cylinder radius="0.1" length="0.05"/>
+      </geometry>
+    </visual>
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+      <mass value="5"/>
+      <cylinder_inertia m="5" r="0.1" h="0.05"/>
+      <inertia
+        ixx="1.0" ixy="0.0" ixz="0.0"
+        iyy="1.0" iyz="0.0"
+        izz="1.0"/>
+    </inertial>
+  </link>
+
+
+  <joint type="continuous" name="left_wheel_hinge">
+    <origin xyz="0.1 0.15 0" rpy="0 0 0"/>
+    <child link="left_wheel"/>
+    <parent link="chassis"/>
+    <axis xyz="0 1 0" rpy="0 0 0"/>
+    <limit effort="100" velocity="100"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+  <joint type="continuous" name="right_wheel_hinge">
+    <origin xyz="0.1 -0.15 0" rpy="0 0 0"/>
+    <child link="right_wheel"/>
+    <parent link="chassis"/>
+    <axis xyz="0 1 0" rpy="0 0 0"/>
+    <limit effort="100" velocity="100"/>
+    <joint_properties damping="0.0" friction="0.0"/>
+  </joint>
+
+  <gazebo>
+    <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+      <legacyMode>false</legacyMode>
+      <alwaysOn>true</alwaysOn>
+      <updateRate>20</updateRate>
+      <leftJoint>left_wheel_hinge</leftJoint>
+      <rightJoint>right_wheel_hinge</rightJoint>
+      <wheelSeparation>0.4</wheelSeparation>
+      <wheelDiameter>0.1</wheelDiameter>
+      <torque>20</torque>
+      <commandTopic>cmd_vel</commandTopic>
+      <odometryTopic>odom</odometryTopic>
+      <odometryFrame>odom</odometryFrame>
+      <robotBaseFrame>chassis</robotBaseFrame>
+    </plugin>
+  </gazebo>
+
+  <gazebo reference="chassis">
+    <material>Gazebo/Orange</material>
+  </gazebo>
+
+<!-- CAMERAS -->
+  <link name="camera_pos_x">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+
+    <inertial>
+      <mass value="0.1" />
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <box_inertia m="0.1" x="0.1" y="0.1" z="0.1" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+
+  </link>
+
+  <link name="camera_pos_y">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 1.57079632679"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 1.57079632679"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+
+    <inertial>
+      <mass value="0.1" />
+      <origin xyz="0 0 0" rpy="0 0 1.57079632679"/>
+      <box_inertia m="0.1" x="0.1" y="0.1" z="0.1" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+
+  </link>
+
+  <link name="camera_neg_x">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 3.14159"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 3.14159"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+
+    <inertial>
+      <mass value="0.1" />
+      <origin xyz="0 0 0" rpy="0 0 3.14159"/>
+      <box_inertia m="0.1" x="0.1" y="0.1" z="0.1" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+
+  </link>
+
+  <link name="camera_neg_y">
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 4.71238898038"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+    </collision>
+
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 4.71238898038"/>
+      <geometry>
+        <box size="0.1 0.1 0.1"/>
+      </geometry>
+      <material name="red"/>
+    </visual>
+
+    <inertial>
+      <mass value="0.1" />
+      <origin xyz="0 0 0" rpy="0 0 4.71238898038"/>
+      <box_inertia m="0.1" x="0.1" y="0.1" z="0.1" />
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+    </inertial>
+
+  </link>
+
+<!-- JOINTS -->
+    <!--1-->  
+  <joint name="camera_joint_one" type="fixed">
+    <axis xyz="0 0 1" />
+    <origin xyz="0 0 0.1" rpy="0 0 0"/>
+    <parent link="chassis"/>
+    <child link="camera_pos_x"/>
+  </joint>
+    <!--2--> 
+  <joint name="camera_joint_two" type="fixed">
+    <axis xyz="0 0 1" />
+    <origin xyz="0 0 0.1" rpy="0 0 1.57079632679"/>
+    <parent link="chassis"/>
+    <child link="camera_pos_y"/>
+  </joint>
+    <!--3--> 
+  <joint name="camera_joint_three" type="fixed">
+    <axis xyz="0 0 1" />
+    <origin xyz="0 0 0.1" rpy="0 0 3.14159"/>
+    <parent link="chassis"/>
+    <child link="camera_neg_x"/>
+  </joint>
+    <!--4--> 
+  <joint name="camera_joint_four" type="fixed">
+    <axis xyz="0 0 1" />
+    <origin xyz="0 0 0.1" rpy="0 0 4.71238898038"/>
+    <parent link="chassis"/>
+    <child link="camera_neg_y"/>
+  </joint>
+
+
+  <!-- GAZEBO PLUGINS -->
+
+  <gazebo reference="camera_pos_x">
+      <material>Gazebo/Green</material>
+      <sensor type="wideanglecamera" name="camera1">
+        <update_rate>30.0</update_rate>
+        <camera name="head_1">
+
+          <horizontal_fov>1.5708</horizontal_fov>
+          <!-- <horizontal_fov>2.0944</horizontal_fov> -->
+
+          <image>
+            <width>960</width>
+            <height>540</height>
+            <format>R8G8B8</format>
+          </image>
+
+
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+
+          <lens>
+            <!-- type element is mandatory -->
+            <type>custom</type>
+            <!-- manually defined mapping function r = c1*f*fun(theta/c2 + c3) -->
+            <!-- More information here: https://en.wikipedia.org/wiki/Fisheye_lens#Mapping_function -->
+            <custom_function>
+              <c1>1.07</c1>
+              <!-- linear scaling -->
+              <c2>4</c2>
+              <!-- angle scaling -->
+              <f>1.0</f>
+              <!-- one more scaling parameter -->
+              <fun>tan</fun>
+              <!-- one of sin,tan,id -->
+            </custom_function>
+            <!-- if it is set to `true` your horizontal FOV will ramain as defined -->
+            <!-- othervise it depends on lens type and custom function, if there is one -->
+            <scale_to_hfov>true</scale_to_hfov>
+            <!-- clip everything that is outside of this angle -->
+            <cutoff_angle>3.1415</cutoff_angle>
+            <!-- resolution of the cubemap texture, the highter it is - the sharper is your image -->
+            <env_texture_size>512</env_texture_size>
+          </lens>
+
+        </camera>
+        <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>30.0</updateRate>
+          <cameraName>mybot/camera1</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>camera</frameName>
+          <hackBaseline>0.07</hackBaseline>
+          <!-- <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2> -->
+        </plugin>
+      </sensor>
+    </gazebo>
+
+    <gazebo reference="camera_pos_y">
+      <material>Gazebo/Green</material>
+      <sensor type="wideanglecamera" name="camera2">
+        <update_rate>30.0</update_rate>
+        <camera name="head_2">
+
+          <horizontal_fov>1.5708</horizontal_fov>
+          <!-- <horizontal_fov>2.0944</horizontal_fov> -->
+
+          <image>
+            <width>960</width>
+            <height>540</height>
+            <format>R8G8B8</format>
+          </image>
+
+
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+
+          <lens>
+            <!-- type element is mandatory -->
+            <type>custom</type>
+            <!-- manually defined mapping function r = c1*f*fun(theta/c2 + c3) -->
+            <!-- More information here: https://en.wikipedia.org/wiki/Fisheye_lens#Mapping_function -->
+            <custom_function>
+              <c1>1.07</c1>
+              <!-- linear scaling -->
+              <c2>4</c2>
+              <!-- angle scaling -->
+              <f>1.0</f>
+              <!-- one more scaling parameter -->
+              <fun>tan</fun>
+              <!-- one of sin,tan,id -->
+            </custom_function>
+            <!-- if it is set to `true` your horizontal FOV will ramain as defined -->
+            <!-- othervise it depends on lens type and custom function, if there is one -->
+            <scale_to_hfov>true</scale_to_hfov>
+            <!-- clip everything that is outside of this angle -->
+            <cutoff_angle>3.1415</cutoff_angle>
+            <!-- resolution of the cubemap texture, the highter it is - the sharper is your image -->
+            <env_texture_size>512</env_texture_size>
+          </lens>
+
+        </camera>
+        <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>30.0</updateRate>
+          <cameraName>mybot/camera2</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>camera</frameName>
+          <hackBaseline>0.07</hackBaseline>
+          <!-- <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2> -->
+        </plugin>
+      </sensor>
+    </gazebo>
+
+    <gazebo reference="camera_neg_x">
+      <material>Gazebo/Green</material>
+      <sensor type="wideanglecamera" name="camera3">
+        <update_rate>30.0</update_rate>
+        <camera name="head_3">
+
+          <horizontal_fov>1.5708</horizontal_fov>
+          <!-- <horizontal_fov>2.0944</horizontal_fov> -->
+
+          <image>
+            <width>960</width>
+            <height>540</height>
+            <format>R8G8B8</format>
+          </image>
+
+
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+
+          <lens>
+            <!-- type element is mandatory -->
+            <type>custom</type>
+            <!-- manually defined mapping function r = c1*f*fun(theta/c2 + c3) -->
+            <!-- More information here: https://en.wikipedia.org/wiki/Fisheye_lens#Mapping_function -->
+            <custom_function>
+              <c1>1.07</c1>
+              <!-- linear scaling -->
+              <c2>4</c2>
+              <!-- angle scaling -->
+              <f>1.0</f>
+              <!-- one more scaling parameter -->
+              <fun>tan</fun> 
+              <!-- one of sin,tan,id -->
+            </custom_function>
+            <!-- if it is set to `true` your horizontal FOV will ramain as defined -->
+            <!-- othervise it depends on lens type and custom function, if there is one -->
+            <scale_to_hfov>true</scale_to_hfov>
+            <!-- clip everything that is outside of this angle -->
+            <cutoff_angle>3.1415</cutoff_angle>
+            <!-- resolution of the cubemap texture, the highter it is - the sharper is your image -->
+            <env_texture_size>512</env_texture_size>
+          </lens>
+
+        </camera>
+        <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>30.0</updateRate>
+          <cameraName>mybot/camera3</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>camera</frameName>
+          <hackBaseline>0.07</hackBaseline>
+          <!-- <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2> -->
+        </plugin>
+      </sensor>
+    </gazebo>
+
+    <gazebo reference="camera_neg_y">
+      <material>Gazebo/Green</material>
+      <sensor type="wideanglecamera" name="camera4">
+        <update_rate>30.0</update_rate>
+        <camera name="head_4">
+
+          <horizontal_fov>1.5708</horizontal_fov>
+          <!-- <horizontal_fov>2.0944</horizontal_fov> -->
+
+          <image>
+            <width>960</width>
+            <height>540</height>
+            <format>R8G8B8</format>
+          </image>
+
+
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+
+          <lens>
+            <!-- type element is mandatory -->
+            <type>custom</type>
+            <!-- manually defined mapping function r = c1*f*fun(theta/c2 + c3) -->
+            <!-- More information here: https://en.wikipedia.org/wiki/Fisheye_lens#Mapping_function -->
+            <custom_function>
+              <c1>1.07</c1>
+              <!-- linear scaling -->
+              <c2>4</c2>
+              <!-- angle scaling -->
+              <f>1.0</f>
+              <!-- one more scaling parameter -->
+              <fun>tan</fun>
+              <!-- one of sin,tan,id -->
+            </custom_function>
+            <!-- if it is set to `true` your horizontal FOV will ramain as defined -->
+            <!-- othervise it depends on lens type and custom function, if there is one -->
+            <scale_to_hfov>true</scale_to_hfov>
+            <!-- clip everything that is outside of this angle -->
+            <cutoff_angle>3.1415</cutoff_angle>
+            <!-- resolution of the cubemap texture, the highter it is - the sharper is your image -->
+            <env_texture_size>512</env_texture_size>
+          </lens>
+
+        </camera>
+        <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>30.0</updateRate>
+          <cameraName>mybot/camera4</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>camera</frameName>
+          <hackBaseline>0.07</hackBaseline>
+          <!-- <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2> -->
+        </plugin>
+      </sensor>
+    </gazebo>
+
+
+  <!-- <gazebo reference="camera_pos_x">
+      <material>Gazebo/Green</material>
+      <sensor type="camera" name="camera1">
+        <update_rate>30.0</update_rate>
+        <camera name="head_1">
+          <save enabled="true">
+              <path>/home/brooks/camera_saves/pos_x</path>
+            </save>
+          <horizontal_fov>2.0944</horizontal_fov>
+
+          <image>
+            <width>960</width>
+            <height>540</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+        </camera>
+        <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>30.0</updateRate>
+          <cameraName>mybot/camera1</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>camera</frameName>
+          <hackBaseline>0.07</hackBaseline>
+          <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2>
+        </plugin>
+      </sensor>
+    </gazebo> -->
+
+  <!-- <gazebo reference="camera_pos_y">
+      <material>Gazebo/Green</material>
+      <sensor type="camera" name="camera2">
+        <update_rate>30.0</update_rate>
+        <camera name="head_2">
+          <save enabled="true">
+              <path>/home/brooks/camera_saves/pos_y</path>
+            </save>
+          <horizontal_fov>2.0944</horizontal_fov>
+          <image>
+            <width>960</width>
+            <height>540</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+        </camera>
+        <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>30.0</updateRate>
+          <cameraName>mybot/camera2</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>camera</frameName>
+          <hackBaseline>0.07</hackBaseline>
+          <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2>
+        </plugin>
+      </sensor>
+    </gazebo> -->
+
+
+    <!-- <gazebo reference="camera_neg_x">
+      <material>Gazebo/Green</material>
+      <sensor type="camera" name="camera3">
+        <update_rate>30.0</update_rate>
+        <camera name="head_3">
+          <save enabled="true">
+            <path>/home/brooks/camera_saves/neg_x</path>
+          </save>
+          <horizontal_fov>2.0944</horizontal_fov>
+          <image>
+            <width>960</width>
+            <height>540</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+        </camera>
+        <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>30.0</updateRate>
+          <cameraName>mybot/camera3</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>camera</frameName>
+          <hackBaseline>0.07</hackBaseline>
+          <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2>
+        </plugin>
+      </sensor>
+    </gazebo> -->
+
+
+    <!-- <gazebo reference="camera_neg_y">
+      <material>Gazebo/Green</material>
+      <sensor type="camera" name="camera4">
+        <update_rate>30.0</update_rate>
+        <camera name="head_4">
+          <horizontal_fov>2.0944</horizontal_fov>
+          <save enabled="true">
+            <path>/home/brooks/camera_saves/neg_y</path>
+          </save>
+          <image>
+            <width>960</width>
+            <height>540</height>
+            <format>R8G8B8</format>
+          </image>
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+        </camera>
+        <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>30.0</updateRate>
+          <cameraName>mybot/camera4</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>camera</frameName>
+          <hackBaseline>0.07</hackBaseline>
+          <distortionK1>0.0</distortionK1>
+          <distortionK2>0.0</distortionK2>
+          <distortionK3>0.0</distortionK3>
+          <distortionT1>0.0</distortionT1>
+          <distortionT2>0.0</distortionT2>
+        </plugin>
+      </sensor>
+    </gazebo> -->
+
+</robot>
