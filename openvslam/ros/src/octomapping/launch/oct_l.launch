@@ -2,7 +2,7 @@
     <node pkg="pcl_ros" 
         type="pcd_to_pointcloud" 
         name="show_pointcloud" 
-        args="/home/conor/msc-project/openvslam/build/maps/museum_capture.pcd _frame_id:=/world" 
+        args="/home/conor/msc-project/openvslam/build/maps/museum_custom_map_2d.pcd _frame_id:=/world" 
         output="screen" />
     <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
         <param name="resolution" value="0.4" />
