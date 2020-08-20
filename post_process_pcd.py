@@ -8,8 +8,9 @@ For a copy, see <https://github.com/xdspacelab/openvslam/blob/master/LICENSE>.
 """
 
 
-import sys, os, re
+import sys, os, re, math
 import numpy as np
+
 
 
 def realign_axes(points):
@@ -30,22 +31,46 @@ def get_point_list(lines):
 
 
 def flattened(points):
-    index_mask = np.where((points[:, 1] < 1) & (points[:, 1] > -1 ))
     
-    filtered = points[index_mask] 
-    flat = realign_axes(filtered) # Set the proper axes
+    points = realign_axes(points) # Set the proper axes
 
+    """Seems to be better to include all heights after a quick test"""
+
+    # index_mask = np.where((points[:, 2] < 1) & (points[:, 2] > -1 ))
+    # filtered_points = points[index_mask] 
+    flat = [ [p[0], p[1], 0] for p in points ]
     return flat
 
 
-def rotate_plane(points):
-    rotated = []
-    return rotated
+def distance(p1, p2):
+    # on x, y axes
+    x1, y1 = p1[0], p1[1]
+    x2, y2 = p2[0], p2[1]
+
+    x = (x2 - x1)**2
+    y = (y2 - y1)**2
+    
+    return math.sqrt(x+y)
 
 
-def discretize(points):
-    x_bound = [np.min(points[:,0]), np.max(points[:,0])]
-    y_bound = [np.min(points[:,1]), np.max(points[:,1])]
+def min_neighbor_filter(points, min_num_neighbors=5, radius=0.1):
+    keep = []
+    print('Filtering neighbors...')
+    for ind, p in enumerate(points):
+        neighbor_count = 0
+        for n in points:
+            # print(distance(p, n))
+            if distance(p, n) <= radius:
+                neighbor_count += 1
+        # print("Neighbors: ", neighbor_count)
+        if neighbor_count >= min_num_neighbors:
+            keep.append(p)
+        if ind % 200 == 0:
+            print("point {}/{}".format(ind, len(points)))
+    
+    return keep
+
+
 
 
 def save(points, name):
@@ -57,24 +82,43 @@ def save(points, name):
         for p in points:
             f.write("{} {} {}\n".format(p[0], p[1], p[2]) )
         f.close()
+        print("Saved to {}".format(save_path))    
 
 
 
 
-def main(map_name):
-    
+
+def main(map_name, min_neighbors=None, radius=None):
+    point_array = []
     with open(os.path.join(os.getcwd(), 'openvslam','build','maps',map_name+'.pcd'), 'r') as pcd_file:
         point_array = get_point_list(pcd_file.readlines())
-        bounds = []
+        pcd_file.close()
 
-        flat = flattened(point_array)
 
-        save(flat, map_name)
-        
+    point_array = flattened(point_array)
+    filtered_points = min_neighbor_filter(point_array, min_num_neighbors=5, radius=0.07)
+
+    print("Pre filter: {}\nPost filter: {}... {}% points removed.\n".format( len(point_array), len(filtered_points), float(len(filtered_points)/len(point_array)) )   )
     
+    save(filtered_points, map_name)
 
 
 if __name__ == "__main__":
-    map_name = sys.argv[1]  
+    min_neighbors = None
+    radius = None
+    
+    #
+    try:
+        map_name = sys.argv[1]  
 
-    main(map_name)
+    except:
+        print("Usage:\n$python post_process_pcd.py map_name (optional->)min_neighbors (optional->)radius")
+        exit()
+
+    try:
+        min_neighbors = sys.argv[2]
+        radius = sys.argv[3]
+    except:
+        print("Min Neighbor and Radius not supplied, usage:\n$python post_process_pcd.py map_name (optional->)min_neighbors (optional->)radius\nContinuing with default values. ")
+
+    main(map_name, min_neighbors=min_neighbors, radius=radius)
