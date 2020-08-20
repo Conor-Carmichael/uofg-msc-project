@@ -12,6 +12,10 @@ import sys, os, re
 import numpy as np
 
 
+def realign_axes(points):
+    # Swaps incoming Z axis to be the Y axis. Visuzalizing the pcd before this would have the floor be on the x-z plane. More normal to have it on the x-y
+    return np.array([ [p[0], p[2], p[1]] for p in points])
+
 
 def get_point_list(lines):
     points = []
@@ -26,18 +30,22 @@ def get_point_list(lines):
 
 
 def flattened(points):
-    f1 = np.where((points[:, 1] < 1) & (points[:, 1] > -1 ))
+    index_mask = np.where((points[:, 1] < 1) & (points[:, 1] > -1 ))
     
-    filtered = points[f1] 
-    flat = np.array([ [p[0], p[2], 0] for p in filtered])
+    filtered = points[index_mask] 
+    flat = realign_axes(filtered) # Set the proper axes
 
     return flat
 
 
+def rotate_plane(points):
+    rotated = []
+    return rotated
+
+
 def discretize(points):
     x_bound = [np.min(points[:,0]), np.max(points[:,0])]
-    z_bound = [np.min(points[:,2]), np.max(points[:,2])]
-
+    y_bound = [np.min(points[:,1]), np.max(points[:,1])]
 
 
 def save(points, name):
