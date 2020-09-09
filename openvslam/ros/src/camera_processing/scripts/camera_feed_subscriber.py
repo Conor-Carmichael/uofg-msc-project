@@ -13,6 +13,13 @@ from cv_bridge import CvBridge, CvBridgeError
 
 import time
 
+def save_individual_frames(o, t, th, f):
+
+    cv2.imwrite(os.path.join('/', 'home', 'conor', 'msc-project', 'Videos', 'frames','one', 'frame_{}.jpg'.format(time.time())), o)
+    cv2.imwrite(os.path.join('/', 'home', 'conor', 'msc-project', 'Videos', 'frames','two', 'frame_{}.jpg'.format(time.time())), t)
+    cv2.imwrite(os.path.join('/', 'home', 'conor', 'msc-project', 'Videos', 'frames','three', 'frame_{}.jpg'.format(time.time())), th)
+    cv2.imwrite(os.path.join('/', 'home', 'conor', 'msc-project', 'Videos', 'frames','four', 'frame_{}.jpg'.format(time.time())), f)
+
 def callback(cam_one, cam_two, cam_three, cam_four):
     # 1 +x, 2 +y, 3 -x, 4 -y
     image_pub = rospy.Publisher("/camera/image_raw", Image, queue_size=10)
@@ -38,6 +45,8 @@ def callback(cam_one, cam_two, cam_three, cam_four):
 
     cv2.imwrite(os.path.join('/', 'home', 'conor', 'msc-project', 'Videos', 'frames', 'frame_{}.jpg'.format(time.time())), to_pub)
 
+    # save_individual_frames( cv_images[0], cv_images[1], cv_images[2], cv_images[3])
+
     to_pub = bridge.cv2_to_imgmsg(to_pub, "bgr8") # Necessary encoduing
     image_pub.publish(to_pub)
 
@@ -61,6 +70,8 @@ def feed_subscriber():
     image_sub_two = message_filters.Subscriber(cam_two, Image)
     image_sub_three = message_filters.Subscriber(cam_three, Image)
     image_sub_four = message_filters.Subscriber(cam_four, Image)
+
+
 
     time_synch = message_filters.TimeSynchronizer([
                                                 image_sub_one,
