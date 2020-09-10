@@ -1,16 +1,17 @@
-#Dependencies
+#Ignore dependencies
 DBBoW2/
 eigen-eigen-5a0156e40feb
 g20/
 Pangolin/
 opencv-3.4.0/
 
-#Openvslam non personal folders
-# will negate on some
+#Ignore openvslam non personal folders
 openvslam/*
-!openvslam/build/maps/
-!openvslam/build/msc-cam/
-!openvslam/ros/src/
+#Except...
+!openvslam/build/maps
+!openvslam/build/msc-cam
+!openvslam/ros/src
+
 
 
 
