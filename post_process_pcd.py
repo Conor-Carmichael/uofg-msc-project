@@ -72,7 +72,6 @@ def min_neighbor_filter(points, min_num_neighbors=5, radius=0.1):
 
 
 
-
 def save(points, name):
     save_path = os.path.join(os.getcwd(), 'openvslam','build','maps', name+'_2d.pcd')
 
