@@ -2,7 +2,7 @@
 <robot name="small_car">
 
 <!-- Body of Car -->
-  <link name='chassis'>
+  <link name='base_link'>
     <pose>0 0 1 0 0 0</pose>
 
     <inertial>
@@ -21,7 +21,7 @@
       </geometry>
     </collision>
 
-    <visual name='chassis_visual'>
+    <visual name='base_link_visual'>
       <origin xyz="0 0 0" rpy=" 0 0 0"/>
       <geometry>
         <box size=".8 .4 .1"/>
@@ -141,7 +141,7 @@
 <!-- Wheel Joints -->
     <joint type="continuous" name="front_left_wheel_joint">
         <origin xyz="0.2 0.25 0" rpy="0 0 0"/>
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="front_left_wheel"/>
         <axis xyz="0 1 0" rpy="0 0 0"/>
         <limit effort="100" velocity="100"/>
@@ -151,7 +151,7 @@
 
     <joint type="continuous" name="back_left_wheel_joint">
         <origin xyz="-0.2 0.25 0" rpy="0 0 0"/>
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="back_left_wheel"/>
         <axis xyz="0 1 0" rpy="0 0 0"/>
         <limit effort="100" velocity="100"/>
@@ -160,7 +160,7 @@
 
     <joint type="continuous" name="front_right_wheel_joint">
         <origin xyz="0.2 -0.25 0" rpy="0 0 0"/>
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="front_right_wheel"/>
         <axis xyz="0 1 0" rpy="0 0 0"/>
         <limit effort="100" velocity="100"/>
@@ -168,7 +168,7 @@
     </joint>
     <joint type="continuous" name="back_right_wheel_joint">
         <origin xyz="-0.2 -0.25 0" rpy="0 0 0"/>
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="back_right_wheel"/>
         <axis xyz="0 1 0" rpy="0 0 0"/>
         <limit effort="100" velocity="100"/>
@@ -188,7 +188,7 @@
             <rightRearJoint>back_right_wheel_joint</rightRearJoint>
             <wheelSeparation>0.1</wheelSeparation>
             <wheelDiameter>0.2</wheelDiameter>
-            <robotBaseFrame>chassis</robotBaseFrame>
+            <robotBaseFrame>base_link</robotBaseFrame>
             <torque>20</torque>
             <topicName>cmd_vel</topicName>
             <broadcastTF>false</broadcastTF>
@@ -303,28 +303,28 @@
     <joint name="camera_joint_one" type="fixed">
         <axis xyz="0 0 1" />
         <origin xyz="0 0 0.5" rpy="0 0 0"/>
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="camera_pos_x"/>
     </joint>
     <!--2--> 
     <joint name="camera_joint_two" type="fixed">
         <axis xyz="0 0 1" />
         <origin xyz="0 0 0.5" rpy="0 0 1.57079632679"/>
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="camera_pos_y"/>
     </joint>
     <!--3--> 
     <joint name="camera_joint_three" type="fixed">
         <axis xyz="0 0 1" />
         <origin xyz="0 0 0.5" rpy="0 0 3.14159"/>
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="camera_neg_x"/>
     </joint>
     <!--4--> 
     <joint name="camera_joint_four" type="fixed">
         <axis xyz="0 0 1" />
         <origin xyz="0 0 0.5" rpy="0 0 4.71238898038"/>
-        <parent link="chassis"/>
+        <parent link="base_link"/>
         <child link="camera_neg_y"/>
     </joint>
 
@@ -385,11 +385,7 @@
           <cameraInfoTopicName>camera_info</cameraInfoTopicName>
           <frameName>camera</frameName>
           <hackBaseline>0.07</hackBaseline>
-          <!-- <distortionK1>0.0</distortionK1>
-          <distortionK2>0.0</distortionK2>
-          <distortionK3>0.0</distortionK3>
-          <distortionT1>0.0</distortionT1>
-          <distortionT2>0.0</distortionT2> -->
+
         </plugin>
       </sensor>
     </gazebo>
@@ -448,11 +444,7 @@
           <cameraInfoTopicName>camera_info</cameraInfoTopicName>
           <frameName>camera</frameName>
           <hackBaseline>0.07</hackBaseline>
-          <!-- <distortionK1>0.0</distortionK1>
-          <distortionK2>0.0</distortionK2>
-          <distortionK3>0.0</distortionK3>
-          <distortionT1>0.0</distortionT1>
-          <distortionT2>0.0</distortionT2> -->
+
         </plugin>
       </sensor>
     </gazebo>

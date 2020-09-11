@@ -24,13 +24,12 @@
       args="-urdf -param robot_description -model small_car" />
 
 
-  <node pkg="camera_processing" type="camera_feed_subscriber.py" name="camera_processing"/>
+  <node name="camera_processing"  pkg="camera_processing"  type="camera_feed_subscriber.py"/>
   
   <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
 
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
     
-  <node name="point_cloud_publisher" pkg="pcd_publisher.py" type="point_cloud" />
-
+  <node name="point_cloud" pkg="point_cloud" type="pcd_publisher.py" />
 
 </launch>

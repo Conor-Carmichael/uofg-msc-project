@@ -38,7 +38,7 @@ def flattened(points):
 
     # index_mask = np.where((points[:, 2] < 1) & (points[:, 2] > -1 ))
     # filtered_points = points[index_mask] 
-    flat = [ [p[0], p[1], 0] for p in points ]
+    flat = [ [p[0], p[1], 0.0] for p in points ]
     return flat
 
 
