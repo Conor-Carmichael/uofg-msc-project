@@ -1,0 +1,17 @@
+digraph G {
+"base_link" -> "camera_neg_y"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1599930384.965 sec old)\nBuffer length: 0.000 sec\n"];
+"odom" -> "base_link"[label="Broadcaster: /gazebo\nAverage rate: 100.144 Hz\nMost recent transform: 1599930384.959 ( 0.006 sec old)\nBuffer length: 4.983 sec\n"];
+"base_link" -> "camera_pos_x"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1599930384.965 sec old)\nBuffer length: 0.000 sec\n"];
+"base_link" -> "camera_neg_x"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1599930384.965 sec old)\nBuffer length: 0.000 sec\n"];
+"base_link" -> "camera_pos_y"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10000.000 Hz\nMost recent transform: 0.000 ( 1599930384.965 sec old)\nBuffer length: 0.000 sec\n"];
+"map" -> "odom"[label="Broadcaster: /fake_localization\nAverage rate: 100.145 Hz\nMost recent transform: 1599930385.029 ( -0.064 sec old)\nBuffer length: 4.953 sec\n"];
+"world" -> "map"[label="Broadcaster: /odom_map_tf\nAverage rate: 10.197 Hz\nMost recent transform: 1599930385.026 ( -0.060 sec old)\nBuffer length: 4.903 sec\n"];
+"base_link" -> "back_left_wheel"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10.204 Hz\nMost recent transform: 1599930384.962 ( 0.004 sec old)\nBuffer length: 4.900 sec\n"];
+"base_link" -> "back_right_wheel"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10.204 Hz\nMost recent transform: 1599930384.962 ( 0.004 sec old)\nBuffer length: 4.900 sec\n"];
+"base_link" -> "front_left_wheel"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10.204 Hz\nMost recent transform: 1599930384.962 ( 0.004 sec old)\nBuffer length: 4.900 sec\n"];
+"base_link" -> "front_right_wheel"[label="Broadcaster: /robot_state_publisher\nAverage rate: 10.204 Hz\nMost recent transform: 1599930384.962 ( 0.004 sec old)\nBuffer length: 4.900 sec\n"];
+edge [style=invis];
+ subgraph cluster_legend { style=bold; color=black; label ="view_frames Result";
+"Recorded at time: 1599930384.965"[ shape=plaintext ] ;
+ }->"world";
+}

@@ -12,7 +12,7 @@
 
     <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
         <param name="resolution" value="0.1" />
-        <param name="frame_id" type="string" value="world" />
+        <param name="frame_id" type="string" value="map" />
         <!-- maximum range to integrate (speedup!) -->
         <param name="sensor_model/max_range" value="100" />
 
@@ -20,9 +20,5 @@
         <remap from="cloud_in" to="/cloud_pcd" />
     </node>
     
-    <!-- <node pkg="tf" type="static_transform_publisher" 
-        name="link1_broadcaster" 
-        args="0 0 0 0 0 0 1 /world /map 100" /> -->
-
 
 </launch>

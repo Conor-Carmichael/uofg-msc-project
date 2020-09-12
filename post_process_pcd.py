@@ -29,25 +29,24 @@ def get_point_list(lines):
 
     return np.array(points)
 
-# TODO rotate map so that it is accurate
+
 def rotate_points(points):
+    rotated = []
     for point in points:
-        point = [v*-1.0 for v in point]
-    return points
+        rotated.append([float(v)*-1.0 for v in point])
+    return rotated
 
-def rescale(points, scale_fact=2.0):
+
+def rescale(points, scale_fact=2.25):
+    resc = []
     for point in points:
-        point = [v*scale_fact for v in point]
-
-    return points
+        resc.append([float(v)*scale_fact for v in point])
+    return resc
 
 
 def flattened(points):
-    
     points = realign_axes(points) # Set the proper axes
-
-    """Seems to be better to include all heights after a quick test"""
-
+    """Seems to be better to include all heights after a quick test""" 
     # index_mask = np.where((points[:, 2] < 1) & (points[:, 2] > -1 ))
     # filtered_points = points[index_mask] 
     flat = [ [p[0], p[1], 0.0] for p in points ]
@@ -86,8 +85,8 @@ def min_neighbor_filter(points, min_num_neighbors=5, radius=0.1):
 
 def save(points, name):
     save_path = os.path.join(os.getcwd(), 'openvslam','build','maps', name+'_2d.pcd')
-
     header="VERSION .7\nFIELDS x y z\nSIZE 4 4 4\nTYPE F F F\nCOUNT 1 1 1\nWIDTH {}\nHEIGHT 1\nVIEWPOINT 0 0 0 1 0 0 0\nPOINTS {}\nDATA ascii\n".format(len(points),len(points))
+    
     with open(save_path, 'w') as f:
         f.write(header)
         for p in points:
@@ -95,9 +94,9 @@ def save(points, name):
         f.close()
         print("Saved to {}".format(save_path))    
 
-
-
-
+########################
+# MAIN
+#########################
 
 def main(map_name, min_neighbors=None, radius=None):
     point_array = []
@@ -109,11 +108,12 @@ def main(map_name, min_neighbors=None, radius=None):
     point_array = flattened(point_array)
     filtered_points = min_neighbor_filter(point_array, min_num_neighbors=5, radius=0.07)
 
-    print("Pre filter: {}\nPost filter: {}... {}% points removed.\n".format( len(point_array), len(filtered_points), float((len(filtered_points)*1.0)/(len(point_array)*1.0)) )   )
+    print("Pre filter: {}\nPost filter: {}... {}% points removed.\n".format( len(point_array), len(filtered_points), 1-float((len(filtered_points)*1.0)/(len(point_array)*1.0)) )   )
+    
     rotated = rotate_points(filtered_points)
     rescaled = rescale(rotated)
 
-    save(rotated, map_name)
+    save(rescaled, map_name)
 
 
 if __name__ == "__main__":
