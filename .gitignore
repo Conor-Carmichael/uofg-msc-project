@@ -6,13 +6,33 @@ Pangolin/
 opencv-3.4.0/
 
 #Ignore openvslam non personal folders
-openvslam/*
-#Except...
-!openvslam/build/maps
+
+openvslam/3rd
+openvslam/cmake
+openvslam/docs
+openvslam/example
+openvslam/src
+openvslam/test
+openvslam/viewer
+openvslam/.clang-format
+openvslam/.dockerignore
+openvslam/.travis.yml
+openvslam/CMakeLists.txt
+openvslam/Dockerfile.desktop
+openvslam/Dockerfile.socket
+openvslam/LICENSE
+openvslam/README.md
+openvslam/wrecker.yml.desktop
+
+# Next lvl
+# build
+openvslam/build/*
+# !openvslam/build/maps -> Files are too big :(
 !openvslam/build/msc-cam
-!openvslam/ros/src
 
-
+# ros
+openvslam/ros/build
+openvslam/ros/devel
 
 
 #Dont track the frames used to make videos

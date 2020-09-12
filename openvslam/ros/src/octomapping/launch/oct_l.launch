@@ -1,22 +1,28 @@
 <launch>
+
+    <arg name="point_cloud_file" 
+        default="/home/conor/msc-project/openvslam/build/maps/museum_capture_2d.pcd"
+    />
+
     <node pkg="pcl_ros" 
         type="pcd_to_pointcloud" 
         name="show_pointcloud" 
-        args="/home/conor/msc-project/openvslam/build/maps/museum_2d.pcd _frame_id:=/world" 
+        args="$(arg point_cloud_file) _frame_id:=/world" 
         output="screen" />
 
     <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
-        <param name="resolution" value="0.2" />
+        <param name="resolution" value="0.1" />
         <param name="frame_id" type="string" value="world" />
         <!-- maximum range to integrate (speedup!) -->
         <param name="sensor_model/max_range" value="100" />
+
         <!-- data source to integrate (PointCloud2) -->
         <remap from="cloud_in" to="/cloud_pcd" />
     </node>
     
-    <node pkg="tf" type="static_transform_publisher" 
+    <!-- <node pkg="tf" type="static_transform_publisher" 
         name="link1_broadcaster" 
-        args="1 0 0 0 0 0 1 /world /map 100" />
+        args="0 0 0 0 0 0 1 /world /map 100" /> -->
 
 
 </launch>

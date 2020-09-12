@@ -29,6 +29,18 @@ def get_point_list(lines):
 
     return np.array(points)
 
+# TODO rotate map so that it is accurate
+def rotate_points(points):
+    for point in points:
+        point = [v*-1.0 for v in point]
+    return points
+
+def rescale(points, scale_fact=2.0):
+    for point in points:
+        point = [v*scale_fact for v in point]
+
+    return points
+
 
 def flattened(points):
     
@@ -97,9 +109,11 @@ def main(map_name, min_neighbors=None, radius=None):
     point_array = flattened(point_array)
     filtered_points = min_neighbor_filter(point_array, min_num_neighbors=5, radius=0.07)
 
-    print("Pre filter: {}\nPost filter: {}... {}% points removed.\n".format( len(point_array), len(filtered_points), float(len(filtered_points)/len(point_array)) )   )
-    
-    save(filtered_points, map_name)
+    print("Pre filter: {}\nPost filter: {}... {}% points removed.\n".format( len(point_array), len(filtered_points), float((len(filtered_points)*1.0)/(len(point_array)*1.0)) )   )
+    rotated = rotate_points(filtered_points)
+    rescaled = rescale(rotated)
+
+    save(rotated, map_name)
 
 
 if __name__ == "__main__":

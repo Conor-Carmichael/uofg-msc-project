@@ -25,5 +25,41 @@
         pkg="gazebo_ros" 
         type="spawn_model" 
         output="screen"
-        args="-urdf -param robot_description -model aal_bot" />
+        args="-urdf 
+        -param robot_description 
+        -model aal_bot
+        -x 0 -y 0 -z 1" />
+
+    <!-- TF Tree -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+
+    <node pkg="tf" type="static_transform_publisher" 
+        name="odom_world_tf" 
+        args="1 0 0 0 0 0 1 /odom /world 100" />
+
+
+    <!-- Load in map -->
+    <include file="$(find octomapping)/launch/oct_l.launch"/>
+
     <!-- fake localization instead of amcl -->
+    <node pkg="fake_localization" 
+        type="fake_localization"
+        name="fake_localization"
+        clear_params="true"
+        output="screen">
+        
+            <remap from="base_pose_ground_truth" to="odom"/>
+            <param name="global_frame_id" value="map"/>
+            <param name="base_frame_id" value="base_link" />
+    </node>
+
+    <node 
+        pkg="move_base" 
+        type="move_base" 
+        name="move_base" 
+        output="screen"
+    />
+        
+
+</launch>
