@@ -27,8 +27,10 @@ openvslam/wrecker.yml.desktop
 # Next lvl
 # build
 openvslam/build/*
-# !openvslam/build/maps -> Files are too big :(
-!openvslam/build/msc-cam
+!openvslam/build/msc-cam/
+
+#msgpack files are too large
+msgs/
 
 # ros
 openvslam/ros/build
@@ -36,4 +38,4 @@ openvslam/ros/devel
 
 
 #Dont track the frames used to make videos
-Videos/frames/
+videos/frames/
