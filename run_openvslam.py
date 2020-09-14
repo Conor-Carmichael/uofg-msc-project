@@ -17,5 +17,5 @@ if __name__=='__main__':
     if len(sys.argv) != 4:
         print('Invalid input. Usage:')
         print('$python vslam_video.py mp4_file camera_config_yaml msg_dest')
-
+    print(sys.argv)
     main(sys.argv)

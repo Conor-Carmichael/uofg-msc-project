@@ -24,7 +24,7 @@ def callback(image):
     except CvBridgeError as e:
         print(e)
 
-    cv2.imwrite(os.path.join('/', 'home', 'conor', 'msc-project', 'Videos', 'frames', 'frame_{}.jpg'.format(time.time())), cv_image)
+    cv2.imwrite(os.path.join('/', 'home', 'conor', 'msc-project', 'videos', 'frames', 'frame_{}.jpg'.format(time.time())), cv_image)
 
     image_pub.publish(image)
 

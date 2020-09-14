@@ -1,12 +1,22 @@
-# Equirectangular model for RICOH THETA S
+# LUMIX fisheye model for 1K setting
 
 #==============#
 # Camera Model #
 #==============#
 
-Camera.name: "Conor's EquiR Cam"
+Camera.name: "LUMIX DMC-GX8 8mm fisheye 1K"
 Camera.setup: "monocular"
-Camera.model: "perspective"
+Camera.model: "fisheye"
+
+Camera.fx: 441.730011169
+Camera.fy: 442.520822476
+Camera.cx: 480.35667528
+Camera.cy: 275.490228646
+
+Camera.k1: -3.068701296607466433e-02
+Camera.k2: -3.343454364086094217e-03
+Camera.k3: -2.881735840896060968e-03
+Camera.k4: -5.917420310474077278e-04
 
 Camera.fps: 30.0
 Camera.cols: 960
@@ -23,8 +33,30 @@ Feature.scale_factor: 1.2
 Feature.num_levels: 8
 Feature.ini_fast_threshold: 20
 Feature.min_fast_threshold: 7
-Feature.mask_rectangles:
-  - [0.0, 1.0, 0.0, 0.1]
-  - [0.0, 1.0, 0.84, 1.0]
-  - [0.0, 0.2, 0.7, 1.0]
-  - [0.8, 1.0, 0.7, 1.0]
+
+#========================#
+# Initializer Parameters #
+#========================#
+
+Initializer.scaling_factor: 0.5
+
+# Camera.name: "test name"
+# Camera.setup: "monocular"
+# Camera.model: "perspective"
+
+# Camera.fx: 1523.306037
+# Camera.fy: 1380.330890
+# Camera.cx: 256.852037
+# Camera.cy: 116.819146
+
+# Camera.k1: 0.853147
+# Camera.k2: 0.38534
+# Camera.p1: 0.60017
+# Camera.p2: 0.116773
+# Camera.k3: 0.100000
+
+# Camera.fps: 30.0  # please reconfigure according to your camera
+# Camera.cols: 960
+# Camera.rows: 540
+
+# Camera.color_order: "RGB"  # please reconfigure according to your camera

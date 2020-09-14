@@ -25,10 +25,10 @@ def create_id(args):
     return i
 
 def run_create_video(dest):
-    os.system('python frames_to_mp4.py {}'.format())
+    os.system('python frames_to_mp4.py {}'.format(dest))
 
 def run_openvslam(mp4, cam, msg_dest):
-    os.system('python vslam_video.py {} {} {}'.format(mp4, cam, msg_dest))
+    os.system('python run_openvslam.py {} {} {}'.format(mp4, cam, msg_dest))
 
 def run_pcd_conversion(msg_file, pcd_dest):
     os.system('python msg_to_pcd.py {} {}'.format(msg_file, pcd_dest))
@@ -60,11 +60,11 @@ def main(args):
 
 
     # Run OpenVSLAM
-    map_msg_save = os.path.join(base, 'msgs', map_id+'.msg') # Where to store openvslam output
+    map_msg_save = os.path.join(base, 'openvslam', 'build', map_id+'.msg') # Where to store openvslam output
     cam_config_file = os.path.join(base, 'openvslam','build', 'msc-cam', bot_type+'_cam.yaml')
     # print(map_msg_save)
     # print(cam_config_file)
-    retry = 'y'
+    retry = raw_input('Run OpenVSLAM? (y or n)\n')
     while retry.lower() == 'y': 
         run_openvslam(mp4_save, cam_config_file, map_msg_save)
         retry = raw_input('\n\nRun openvslam again? (y or n): ')

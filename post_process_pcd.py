@@ -88,23 +88,22 @@ def min_neighbor_filter(points, min_num_neighbors=5, radius=0.1):
 
 
 def save(points, name):
-    save_path = os.path.join(os.getcwd(), 'openvslam','build','maps', name+'_2d.pcd')
     header="VERSION .7\nFIELDS x y z\nSIZE 4 4 4\nTYPE F F F\nCOUNT 1 1 1\nWIDTH {}\nHEIGHT 1\nVIEWPOINT 0 0 0 1 0 0 0\nPOINTS {}\nDATA ascii\n".format(len(points),len(points))
     
-    with open(save_path, 'w') as f:
+    with open(name, 'w') as f:
         f.write(header)
         for p in points:
             f.write("{} {} {}\n".format(p[0], p[1], p[2]) )
         f.close()
-        print("Saved to {}".format(save_path))    
+        print("Saved to {}".format(name))    
 
 ########################
 # MAIN
 #########################
 
-def main(map_name, min_neighbors=None, radius=None):
+def main(map_name, save_name, min_neighbors=None, radius=None):
     point_array = []
-    with open(os.path.join(os.getcwd(), 'openvslam','build','maps',map_name+'.pcd'), 'r') as pcd_file:
+    with open(map_name, 'r') as pcd_file:
         point_array = get_point_list(pcd_file.readlines())
         pcd_file.close()
 
@@ -117,7 +116,7 @@ def main(map_name, min_neighbors=None, radius=None):
     rotated = rotate_points(filtered_points)
     rescaled = rescale(rotated)
 
-    save(rescaled, map_name)
+    save(rescaled, save_name)
 
 
 if __name__ == "__main__":
@@ -138,4 +137,4 @@ if __name__ == "__main__":
     except:
         print("Min Neighbor and Radius not supplied, usage:\n$python post_process_pcd.py map_name (optional->)min_neighbors (optional->)radius\nContinuing with default values. ")
 
-    main(map_name, min_neighbors=min_neighbors, radius=radius)
+    main(map_name, save_name, min_neighbors=min_neighbors, radius=radius)
