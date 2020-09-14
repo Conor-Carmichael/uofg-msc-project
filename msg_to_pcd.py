@@ -24,12 +24,12 @@ to import to the Octomap Server.
 
 '''
 
-def main(bin_fn, dest_fn):
-
-
+def main(args):
+    msg_file = args[1]
+    pcd_destination = args[2]
 
     # Read file as binary and unpack data using MessagePack library
-    with open(bin_fn, "rb") as f:
+    with open(msg_file, "rb") as f:
         data = msgpack.unpackb(f.read(), use_list=False)
 
     # The point data is tagged "landmarks"
@@ -37,7 +37,7 @@ def main(bin_fn, dest_fn):
     print("Point cloud has {} points.".format(len(landmarks)))
 
     # Write point coordinates into file, one point for one line
-    with open(dest_fn, "w") as f:
+    with open(pcd_destination, "w") as f:
         #My addition
         pcd_file_header = "#.PCD v.7 - Point Cloud Data file format\nVERSION .7\nFIELDS x y z\nSIZE 4 4 4\nTYPE F F F\nCOUNT 1 1 1\nWIDTH {}\nHEIGHT 1\nVIEWPOINT 0 0 0 1 0 0 0\nPOINTS {}\nDATA ascii\n".format(len(landmarks),len(landmarks))
 
@@ -46,11 +46,8 @@ def main(bin_fn, dest_fn):
         for id, point in landmarks.items():
             pos = point["pos_w"]
             f.write("{} {} {}\n".format(pos[0], pos[1], pos[2]))
-    print("Finished")
-    # resp = raw_input('To view this file, type YES and press enter.\n')
-    # if resp.upper() == 'YES':
-    #     os.system("pcl_viewer -bc 1,1,1 -ps 2 -fc 0,0,0 /home/conor/msc-project/openvslam/build/maps/museum_capture.pcd ")
 
+    print("Finished")
 
 if __name__ == "__main__":
     argv = sys.argv
@@ -58,9 +55,7 @@ if __name__ == "__main__":
     if len(argv) < 3:
         print("Error, usage: ")
         # Edited prompt
-        print("$python msc_to_pcd.py [map file] [.pcd destination]")
+        print("$python msg_to_pcd.py [map file] [.pcd destination]")
 
     else:
-        bin_fn = argv[1]
-        dest_fn = argv[2]
-        main(bin_fn, dest_fn)
+        main(argv)

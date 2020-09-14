@@ -30,9 +30,19 @@ def run_create_video(dest):
 def run_openvslam(mp4, cam, msg_dest):
     os.system('python vslam_video.py {} {} {}'.format(mp4, cam, msg_dest))
 
+def run_pcd_conversion(msg_file, pcd_dest):
+    os.system('python msg_to_pcd.py {} {}'.format(msg_file, pcd_dest))
+
+def run_pcd_processing(pcd_file, two_dim_pcd_dest):
+    os.system('python post_process_pcd.py {} {}'.format(pcd_file, two_dim_pcd_dest))
 
 
 
+########
+#      #
+# MAIN #
+#      #
+########
 
 def main(args):
     # Check the arguments for validity
@@ -45,12 +55,15 @@ def main(args):
 
     # Create mp4 from frames folder
     mp4_save = os.path.join(base, 'videos', map_id+'.mp4')
+    # print(mp4_save)
     run_create_video(mp4_save)
 
 
     # Run OpenVSLAM
-    map_msg_save = os.path.join(base, 'msgs', map_id+'.msg')
+    map_msg_save = os.path.join(base, 'msgs', map_id+'.msg') # Where to store openvslam output
     cam_config_file = os.path.join(base, 'openvslam','build', 'msc-cam', bot_type+'_cam.yaml')
+    # print(map_msg_save)
+    # print(cam_config_file)
     retry = 'y'
     while retry.lower() == 'y': 
         run_openvslam(mp4_save, cam_config_file, map_msg_save)
@@ -58,11 +71,20 @@ def main(args):
 
 
     # Create pcd from message pack
-    pcd_save = os.path.join(base, 'pcd', map_id+'.pcd')
+    pcd_save = os.path.join(base, 'pcd', map_id+'.pcd') # Save msg conversion
+    # print(pcd_save)
+    run_pcd_conversion(map_msg_save, pcd_save)
 
     # Run post processing on pcd
+    two_dim_pcd = os.path.join(base, 'pcd', '2d', map_id+'.pcd')
+    # print(two_dim_pcd)
+    run_pcd_processing(pcd_save, two_dim_pcd)
 
     # Finish
+    return map_id
+
+
 
 if __name__=='__main__':
-    main(sys.argv)
+   map_id =  main(sys.argv)
+   print('Pipeline finished. The identifier is:\n{}'.format(map_id))
