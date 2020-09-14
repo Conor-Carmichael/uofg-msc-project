@@ -1,15 +1,18 @@
 import os, sys
 
 
-def main(out_file_name):   
+def main(output__destination):   
     fps = 30
-    print("Creating video @{} FPS.".format(fps))
-    os.system("ffmpeg -framerate {} -pattern_type glob -i '/home/conor/msc-project/Videos/frames/*.jpg' -c:v libx264 /home/conor/msc-project/Videos/{}.mp4".format(fps, out_file_name))
-    print("Finished.\nSaved to msc-project/Videos/{}".format(out_file_name))
+    os.system("ffmpeg -framerate {} \
+    -pattern_type glob \
+    -i '/~/msc-project/videos/frames/*.jpg' \
+    -c:v libx264 {}".format(fps, output__destination))
+
+    print("Finished.\nSaved to {}".format(output__destination))
 
 if __name__=='__main__':
     if len(sys.argv) != 2 :
         print('Invalid input. Usage:')
-        print('$python create_video.py output_file_name')
+        print('$python frames_to_mp4.py output_destination')
 
     main(sys.argv[1])
