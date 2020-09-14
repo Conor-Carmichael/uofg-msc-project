@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <arg name="world" default="empty"/> 
+  <arg name="paused" default="true"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="verbose" value="true" />
+  
+  <!-- Choose robot to work with -->
+  <arg name='bot' default='sc_bot' />
+  
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find gazebo_env)/worlds/alley.world"/>
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="verbose" value="$(arg verbose)" />
+  </include>
+
+  
+  <param name="robot_description" textfile="$(find bot_description)/urdf/$(arg bot).urdf"/>
+
+  <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+        args="-urdf -param robot_description -model $(arg bot)"/>
+
+
+  <node name="camera_processing"  pkg="camera_processing"  type="$(arg bot)_processor.py"/>
+
+
+</launch>

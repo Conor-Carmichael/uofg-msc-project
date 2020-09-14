@@ -1,0 +1,299 @@
+<?xml version='1.0'?>
+<robot name="sc_bot">
+
+<!-- Body of Car -->
+  <link name='base_link'>
+    <pose>0 0 1 0 0 0</pose>
+
+    <inertial>
+      <mass value="30.0"/>
+      <origin xyz="0.0 0 0.2" rpy=" 0 0 0"/>
+      <inertia
+          ixx="5.0" ixy="0" ixz="0"
+          iyy="25.0" iyz="0"
+          izz="4"
+      />
+    </inertial>
+
+    <collision name='collision'>
+      <geometry>
+        <box size=".8 .4 .1"/>
+      </geometry>
+    </collision>
+
+    <visual name='base_link_visual'>
+      <origin xyz="0 0 0" rpy=" 0 0 0"/>
+      <geometry>
+        <box size=".8 .4 .1"/>
+      </geometry>
+    </visual>
+
+  </link>
+
+<!-- Wheels -->
+    <!-- LEFT -->
+    <link name="front_left_wheel">
+
+        <collision name="collision">
+            <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+            <geometry>
+            <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+        </collision>
+
+        <visual name="front_left_wheel_visual">
+            <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+        </visual>
+
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+            <mass value="5"/>
+            <cylinder_inertia m="5" r="0.1" h="0.05"/>
+            <inertia
+            ixx="1.0" ixy="0.0" ixz="0.0"
+            iyy="1.0" iyz="0.0"
+            izz="1.0"/>
+        </inertial>
+
+    </link>
+
+    <link name="back_left_wheel">
+    
+        <collision name="collision">
+            <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+        </collision>
+        
+        <visual name="back_left_wheel_visual">
+            <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+        </visual>
+
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+            <mass value="5"/>
+            <cylinder_inertia m="5" r="0.1" h="0.05"/>
+            <inertia
+                ixx="1.0" ixy="0.0" ixz="0.0"
+                iyy="1.0" iyz="0.0"
+                izz="1.0"/>
+        </inertial>
+    
+    </link>
+
+    <!-- RIGHT -->
+
+    <link name="front_right_wheel">
+        <collision name="collision">
+            <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+        </collision>
+        <visual name="front_right_wheel_visual">
+            <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+        </visual>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+            <mass value="5"/>
+            <cylinder_inertia m="5" r="0.1" h="0.05"/>
+            <inertia
+            ixx="1.0" ixy="0.0" ixz="0.0"
+            iyy="1.0" iyz="0.0"
+            izz="1.0"/>
+        </inertial>
+    </link>
+
+    <link name="back_right_wheel">
+        <collision name="collision">
+            <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+        </collision>
+        <visual name="back_right_wheel_visual">
+            <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+            <geometry>
+                <cylinder radius="0.1" length="0.05"/>
+            </geometry>
+        </visual>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
+            <mass value="5"/>
+            <cylinder_inertia m="5" r="0.1" h="0.05"/>
+            <inertia
+            ixx="1.0" ixy="0.0" ixz="0.0"
+            iyy="1.0" iyz="0.0"
+            izz="1.0"/>
+        </inertial>
+    </link>
+
+<!-- Wheel Joints -->
+    <joint type="continuous" name="front_left_wheel_joint">
+        <origin xyz="0.2 0.25 0" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="front_left_wheel"/>
+        <axis xyz="0 1 0" rpy="0 0 0"/>
+        <limit effort="100" velocity="100"/>
+        <joint_properties damping="0.0" friction="0.0"/>
+    </joint>
+
+
+    <joint type="continuous" name="back_left_wheel_joint">
+        <origin xyz="-0.2 0.25 0" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="back_left_wheel"/>
+        <axis xyz="0 1 0" rpy="0 0 0"/>
+        <limit effort="100" velocity="100"/>
+        <joint_properties damping="0.0" friction="0.0"/>
+    </joint>
+
+    <joint type="continuous" name="front_right_wheel_joint">
+        <origin xyz="0.2 -0.25 0" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="front_right_wheel"/>
+        <axis xyz="0 1 0" rpy="0 0 0"/>
+        <limit effort="100" velocity="100"/>
+        <joint_properties damping="0.0" friction="0.0"/>
+    </joint>
+    <joint type="continuous" name="back_right_wheel_joint">
+        <origin xyz="-0.2 -0.25 0" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="back_right_wheel"/>
+        <axis xyz="0 1 0" rpy="0 0 0"/>
+        <limit effort="100" velocity="100"/>
+        <joint_properties damping="0.0" friction="0.0"/>
+    </joint>
+
+    <!-- Gazebo Drive Plugin -->
+
+
+    <gazebo>
+        <plugin name="skid_steer_drive_controller" filename="libgazebo_ros_skid_steer_drive.so">
+            <updateRate>100.0</updateRate>
+            <robotNamespace>/</robotNamespace>
+            <leftFrontJoint>front_left_wheel_joint</leftFrontJoint>
+            <rightFrontJoint>front_right_wheel_joint</rightFrontJoint>
+            <leftRearJoint>back_left_wheel_joint</leftRearJoint>
+            <rightRearJoint>back_right_wheel_joint</rightRearJoint>
+            <wheelSeparation>0.1</wheelSeparation>
+            <wheelDiameter>0.2</wheelDiameter>
+            <robotBaseFrame>base_link</robotBaseFrame>
+            <torque>20</torque>
+            <topicName>cmd_vel</topicName>
+            <broadcastTF>true</broadcastTF>
+        </plugin>
+    </gazebo>
+
+
+
+<!-- Camera Plugins, Models, Joints -->
+
+    <link name="camera_pos_x">
+        <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+            <box size="0.1 0.5 0.1"/>
+        </geometry>
+        </collision>
+
+        <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+            <box size="0.1 0.1 0.1"/>
+        </geometry>
+        <material name="blue"/>
+        </visual>
+
+        <inertial>
+            <mass value="0.1" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <box_inertia m="0.1" x="0.1" y="0.1" z="0.1" />
+            <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+        </inertial>
+
+    </link>
+
+
+<!-- Joints -->
+    <joint name="camera_joint_one" type="fixed">
+        <axis xyz="0 0 1" />
+        <origin xyz="0 0 0.5" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="camera_pos_x"/>
+    </joint>
+
+  <!-- GAZEBO PLUGINS -->
+
+  <gazebo reference="camera_pos_x">
+      <material>Gazebo/Red</material>
+      <sensor type="wideanglecamera" name="camera1">
+        <update_rate>30.0</update_rate>
+        <camera name="head_1">
+
+          <horizontal_fov>1.5708</horizontal_fov>
+          <!-- <horizontal_fov>2.0944</horizontal_fov> -->
+
+          <image>
+            <width>960</width>
+            <height>540</height>
+            <format>R8G8B8</format>
+          </image>
+
+
+          <clip>
+            <near>0.02</near>
+            <far>300</far>
+          </clip>
+
+          <lens>
+            <!-- type element is mandatory -->
+            <type>custom</type>
+            <!-- manually defined mapping function r = c1*f*fun(theta/c2 + c3) -->
+            <!-- More information here: https://en.wikipedia.org/wiki/Fisheye_lens#Mapping_function -->
+            <custom_function>
+              <c1>1.07</c1>
+              <!-- linear scaling -->
+              <c2>4</c2>
+              <!-- angle scaling -->
+              <f>1.0</f>
+              <!-- one more scaling parameter -->
+              <fun>tan</fun>
+              <!-- one of sin,tan,id -->
+            </custom_function>
+            <!-- if it is set to `true` your horizontal FOV will ramain as defined -->
+            <!-- othervise it depends on lens type and custom function, if there is one -->
+            <scale_to_hfov>true</scale_to_hfov>
+            <!-- clip everything that is outside of this angle -->
+            <cutoff_angle>3.1415</cutoff_angle>
+            <!-- resolution of the cubemap texture, the highter it is - the sharper is your image -->
+            <env_texture_size>512</env_texture_size>
+          </lens>
+
+        </camera>
+        <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+          <alwaysOn>true</alwaysOn>
+          <updateRate>30.0</updateRate>
+          <cameraName>sc_bot/camera1</cameraName>
+          <imageTopicName>image_raw</imageTopicName>
+          <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+          <frameName>camera</frameName>
+          <hackBaseline>0.07</hackBaseline>
+
+        </plugin>
+      </sensor>
+    </gazebo>
+
+
+
+</robot>
