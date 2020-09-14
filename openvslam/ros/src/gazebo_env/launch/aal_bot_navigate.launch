@@ -41,7 +41,8 @@
     <!-- Load in map -->
     <include file="$(find octomapping)/launch/oct_l.launch"/>
 
-    <!-- fake localization instead of amcl -->
+
+    <!-- fake_localization instead of amcl -->
     <node pkg="fake_localization" 
         type="fake_localization"
         name="fake_localization"
@@ -53,18 +54,17 @@
     </node>
 
     <!-- Move Base node -->
-    <node 
-        pkg="move_base" 
+    <node pkg="move_base"
         type="move_base" 
         name="move_base" 
         output="screen">
             <!-- Params for  move base: Costmap config -->
-            <!-- <rosparam file="$(find gazebo_env)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
+            <rosparam file="$(find gazebo_env)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
             <rosparam file="$(find gazebo_env)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
 
             <rosparam file="$(find gazebo_env)/config/local_costmap_params.yaml" command="load" /> 
             <rosparam file="$(find gazebo_env)/config/global_costmap_params.yaml" command="load" /> 
-            <rosparam file="$(find gazebo_env)/config/base_local_planner_params.yaml" command="load" />  -->
-
+            <rosparam file="$(find gazebo_env)/config/base_local_planner_params.yaml" command="load" /> 
     </node>
+    
 </launch>
