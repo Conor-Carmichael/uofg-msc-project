@@ -20,10 +20,10 @@
     <param name="robot_description" textfile="$(find bot_description)/urdf/$(arg bot).urdf"/>
 
     <node name="mybot_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
-        args="-urdf -param robot_description -model $(arg bot) -x 0 -y 0 -z 1"/>
+        args="-urdf -param robot_description -model $(arg bot) -x 0 -y 0 -z 0.5"/>
 
 
     <node name="camera_processing"  pkg="camera_processing"  type="$(arg bot)_processor.py"/>
-
+    
 
 </launch>

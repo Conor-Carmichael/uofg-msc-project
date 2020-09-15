@@ -429,6 +429,12 @@ message_runtime_DIR:PATH=/opt/ros/kinetic/share/message_runtime/cmake
 nav_msgs_DIR:PATH=/opt/ros/kinetic/share/nav_msgs/cmake
 
 //Value Computed by CMake
+navigation_BINARY_DIR:STATIC=/home/conor/msc-project/openvslam/ros/build/navigation
+
+//Value Computed by CMake
+navigation_SOURCE_DIR:STATIC=/home/conor/msc-project/openvslam/ros/src/navigation
+
+//Value Computed by CMake
 octomapping_BINARY_DIR:STATIC=/home/conor/msc-project/openvslam/ros/build/octomapping
 
 //Value Computed by CMake
@@ -621,7 +627,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=11
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=12
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

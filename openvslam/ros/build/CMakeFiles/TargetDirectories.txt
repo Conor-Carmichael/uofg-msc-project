@@ -50,6 +50,13 @@
 /home/conor/msc-project/openvslam/ros/build/gazebo_env/CMakeFiles/install/local.dir
 /home/conor/msc-project/openvslam/ros/build/gazebo_env/CMakeFiles/test.dir
 /home/conor/msc-project/openvslam/ros/build/gazebo_env/CMakeFiles/edit_cache.dir
+/home/conor/msc-project/openvslam/ros/build/navigation/CMakeFiles/list_install_components.dir
+/home/conor/msc-project/openvslam/ros/build/navigation/CMakeFiles/install.dir
+/home/conor/msc-project/openvslam/ros/build/navigation/CMakeFiles/rebuild_cache.dir
+/home/conor/msc-project/openvslam/ros/build/navigation/CMakeFiles/install/strip.dir
+/home/conor/msc-project/openvslam/ros/build/navigation/CMakeFiles/install/local.dir
+/home/conor/msc-project/openvslam/ros/build/navigation/CMakeFiles/test.dir
+/home/conor/msc-project/openvslam/ros/build/navigation/CMakeFiles/edit_cache.dir
 /home/conor/msc-project/openvslam/ros/build/octomapping/CMakeFiles/list_install_components.dir
 /home/conor/msc-project/openvslam/ros/build/octomapping/CMakeFiles/install.dir
 /home/conor/msc-project/openvslam/ros/build/octomapping/CMakeFiles/rebuild_cache.dir

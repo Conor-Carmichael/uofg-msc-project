@@ -8,3 +8,4 @@
 
 # modified environment variables
 export PWD="/home/conor/msc-project/openvslam/ros/build"
+export PYTHONPATH="/opt/ros/kinetic/lib/python2.7/dist-packages:/usr/lib/python2.7/dist-packages:/usr/lib/python2.7/dist-packages"
