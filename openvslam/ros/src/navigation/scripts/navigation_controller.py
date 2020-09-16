@@ -55,8 +55,8 @@ class MoveBaseClient:
 
 def distance(p1, p2):
     # on x, y axes
-    x1, y1 = p1[0], p1[1]
-    x2, y2 = p2[0], p2[1]
+    x1, y1 = round(p1[0], 3), round(p1[1], 3)
+    x2, y2 = round(p2[0], 3), round(p2[1], 3)
 
     x = (x2 - x1)**2
     y = (y2 - y1)**2
@@ -68,14 +68,18 @@ def distance(p1, p2):
 def status_callback(gsa):
     global status
     if len(gsa.status_list) > 0:
-        status = int(gsa.status_list[0].status)
+        status = int(gsa.status_list[-1].status)
+    else:
+        status = 0
+    
 
 def pose_callback(pcs):
     global pose
     pose = [pcs.pose.pose.position.x, pcs.pose.pose.position.y]
 
 
-def main(fp):
+
+def main(fp, timeout):
     rospy.init_node('navigation_controller', anonymous=True)
     status_subscriber = rospy.Subscriber('/move_base/status', GoalStatusArray, status_callback)
     pose_subscriber = rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, pose_callback)
@@ -89,33 +93,57 @@ def main(fp):
             {} 2d Nav Goals to run.
         """.format( len(nav_client.goals)) )
 
+
+    # start_pose = [0,0,0] #Logic doesnt work here on second + loop
+    last_pose = [0,0]
+
     for g_num, g in enumerate(nav_client.goals):
         print("Executing Navigation Goal {}".format(g_num))
         nav_client.send_goal(g)
 
-        start_pose = [0,0,0] #Logic doesnt work here on second + loop
+        failed = False
         goal_pose = g
-        last_pose = start_pose
 
         start_time = time.time()
-        distance_total = 0.0
+        path_distance = 0.0
 
         while status != 3:
-            distance_total += distance(round(last_pose, 4), round(pose, 4))
+            path_distance += distance(last_pose, pose)
             last_pose = pose
+
+            if (time.time() - start_time) > timeout:
+                print('Failed routine.')
+                failed = True
+                break
 
         end_time = time.time() 
 
         print("""\n
-            Time taken: {}
-            Distance travelled: {}\n\n
-        """.format(end_time-start_time, distance_total))
+
+            Path {}
+            {} ----> {}
+            x: {}--> {}
+            y: {}--> {}
+
+            Time taken: ............{}s
+            Distance travelled: ....{}m\n\n
+        """.format( "Failed" if failed else "Completed",
+                    g_num, g_num+1, 
+                    nav_client.goals[g_num-1].target_pose.pose.position.x, g.target_pose.pose.position.x,
+                    nav_client.goals[g_num-1].target_pose.pose.position.y, g.target_pose.pose.position.y,
+                    end_time-start_time, path_distance))
 
 
     print('\nAll navigation goals have been completed.\n')
    
 
 if __name__ == '__main__':
-    map_name = sys.argv[1]     
+    map_name = sys.argv[1] 
+    ground_truth = sys.argv[2]
+    timeout = 150
+    try:
+        timeout = sys.argv[3]
+    except:
+        print('Timeout defaulting to 120s.')
     fp = os.path.join('/','home', 'conor','msc-project', 'openvslam','ros','src','navigation','goal_sets', map_name+'.csv')
-    main(fp)
+    main(fp, timeout)

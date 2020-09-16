@@ -44,8 +44,8 @@
             args="$(find gazebo_env)/truth_files/$(arg world).yaml" />
     </group>
 
+    <!-- Using ocotomap if not using ground truth -->
     <group if="$(eval arg('use_truth') ==false)">
-        <!-- Using ocotomap if not using ground truth -->
 
         <!-- Load in cloud -->
         <node pkg="pcl_ros" 
@@ -85,6 +85,8 @@
         type="move_base" 
         name="move_base" 
         output="screen">
+            <param name="planner_frequency" value="0.0" />
+            
             <!-- Params for  move base: Costmap config -->
             <rosparam file="$(find gazebo_env)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
             <rosparam file="$(find gazebo_env)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
