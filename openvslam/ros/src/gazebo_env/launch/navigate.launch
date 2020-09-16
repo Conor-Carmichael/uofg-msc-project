@@ -5,6 +5,7 @@
 
     <arg name="world" default="easy_loop" />
     <arg name="pcd"   default="aal_easy_loop_long.pcd"/>
+    <arg name="use_truth" default="false"/>
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="world_name" value="$(find gazebo_env)/worlds/$(arg world).world"/>
@@ -35,25 +36,38 @@
         name="odom_map_tf" 
         args="0 0 0 0 0 0 1 /world /map 100" />
 
+    
 
-    <!-- Load in map -->
-    <node pkg="pcl_ros" 
-        type="pcd_to_pointcloud" 
-        name="show_pointcloud" 
-        args="/home/conor/msc-project/pcd/2d/$(arg pcd) _frame_id:=/world" 
-        output="screen" />
+    <!-- If intending to use ground truth map, need to use map server node -->
+    <group if="$(arg use_truth)">
+        <node pkg="map_server" type="map_server" name="ground_truth_map_server"
+            args="$(find gazebo_env)/truth_files/$(arg world).yaml" />
+    </group>
 
-    <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
-        <param name="resolution" value="0.1" />
-        <param name="frame_id" type="string" value="map" />
-        <!-- maximum range to integrate (speedup!) -->
-        <param name="sensor_model/max_range" value="100" />
+    <group if="$(eval arg('use_truth') ==false)">
+        <!-- Using ocotomap if not using ground truth -->
 
-        <!-- data source to integrate (PointCloud2) -->
-        <remap from="cloud_in" to="/cloud_pcd" />
-        <remap from="/projected_map" to="/map"/>
+        <!-- Load in cloud -->
+        <node pkg="pcl_ros" 
+            type="pcd_to_pointcloud" 
+            name="show_pointcloud" 
+            args="/home/conor/msc-project/pcd/2d/$(arg pcd) _frame_id:=/world" 
+            output="screen" />
 
-    </node>
+        <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+            <param name="resolution" value="0.1" />
+            <param name="frame_id" type="string" value="map" />
+            <!-- maximum range to integrate (speedup!) -->
+            <param name="sensor_model/max_range" value="100" />
+
+            <!-- data source to integrate (PointCloud2) -->
+            <remap from="cloud_in" to="/cloud_pcd" />
+            <remap from="/projected_map" to="/map"/>
+
+        </node>
+    </group>
+
+
 
     <!-- fake_localization instead of amcl -->
     <node pkg="fake_localization" 
