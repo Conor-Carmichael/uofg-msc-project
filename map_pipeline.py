@@ -11,18 +11,27 @@ Sub-Scripts must take in a full file path, so this file makes full paths, passes
 
 def check_args(args):
 
-    if len(args) != 4:
-        print('Usage:\n$python map_pipeline.py bot_name:[aal, sc] map:[museum, alley] mapping_type:[quick, long] ')
+    if len(args) != 3:
+        print('Usage:\n$python map_pipeline.py \
+            map:[museum, alley] \
+            mapping_type:[quick, long]')
         return False
     else:
         return True
 
 def create_id(args):
-    bot = args[1]
-    map_name = args[2]
-    mapping_type = args[3]
-    i = "{}_{}_{}".format(bot, map_name, mapping_type)
-    return i
+    return "_".join(args[1:])
+
+def log_process(pid):
+    #This is hilariously python
+    print("""
+        #################################
+        #
+        #             Running
+        #             {}
+        #
+        #################################
+    """.format(pid))
 
 def run_create_video(dest):
     os.system('python frames_to_mp4.py {}'.format(dest))
@@ -55,30 +64,32 @@ def main(args):
 
     # Create mp4 from frames folder
     mp4_save = os.path.join(base, 'videos', map_id+'.mp4')
-    # print(mp4_save)
+    log_process('Frames to MP4')
     run_create_video(mp4_save)
 
 
     # Run OpenVSLAM
     map_msg_save = os.path.join(base, 'openvslam', 'build', map_id+'.msg') # Where to store openvslam output
-    cam_config_file = os.path.join(base, 'openvslam','build', 'msc-cam', bot_type+'_cam.yaml')
-    # print(map_msg_save)
-    # print(cam_config_file)
-    retry = raw_input('Run OpenVSLAM? (y or n)\n')
-    while retry.lower() == 'y': 
-        run_openvslam(mp4_save, cam_config_file, map_msg_save)
-        retry = raw_input('\n\nRun openvslam again? (y or n): ')
+    cam_config_file = os.path.join(base, 'openvslam','build', 'msc-cam', 'aal_cam.yaml')
 
+    do = raw_input('Run OpenVSLAM? (y or n): ')
+    while do.lower() == 'y': 
+        run_openvslam(mp4_save, cam_config_file, map_msg_save)
+        do = raw_input('\n\nRun openvslam again? (y or n): ')
 
     # Create pcd from message pack
+    do = raw_input('Convert msg->pcd? (y or n): ')
     pcd_save = os.path.join(base, 'pcd', map_id+'.pcd') # Save msg conversion
-    # print(pcd_save)
-    run_pcd_conversion(map_msg_save, pcd_save)
+    if do.lower() == 'y':
+        log_process('Messagepack to point cloud')
+        run_pcd_conversion(map_msg_save, pcd_save)
 
     # Run post processing on pcd
+    do = raw_input('Run postprocessing on PCD file? (y or n): ')
     two_dim_pcd = os.path.join(base, 'pcd', '2d', map_id+'.pcd')
-    # print(two_dim_pcd)
-    run_pcd_processing(pcd_save, two_dim_pcd)
+    if do.lower() == 'y':
+        log_process('Post Processing PCD')
+        run_pcd_processing(pcd_save, two_dim_pcd)
 
     # Finish
     return map_id
