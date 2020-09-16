@@ -43,7 +43,7 @@ def callback(cam_one, cam_two, cam_three, cam_four):
 
     to_pub = np.concatenate(ordered, axis=1)
 
-    cv2.imwrite(os.path.join('/', 'home', 'conor', 'msc-project', 'Videos', 'frames', 'frame_{}.jpg'.format(time.time())), to_pub)
+    cv2.imwrite(os.path.join('/', 'home', 'conor', 'msc-project', 'videos', 'frames', 'frame_{}.jpg'.format(time.time())), to_pub)
 
     # save_individual_frames( cv_images[0], cv_images[1], cv_images[2], cv_images[3])
 
@@ -55,10 +55,9 @@ def callback(cam_one, cam_two, cam_three, cam_four):
 def feed_subscriber():
 
     rospy.init_node('image_converter', anonymous=True)
-    print("Camera feed subscriber node created.")
 
     print("Clearing the previous camera frames.")
-    os.system('rm -r ~/msc-project/videos/frames/*')
+    os.system('rm -r /home/conor/msc-project/videos/frames/*')
     print("Clearing the previous camera frames complete.")
 
     cam_one = "/aal_bot/camera1/image_raw"

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+<!-- Arguments for maps -->
+
+    <arg name="world" default="easy_loop" />
+    <arg name="pcd"   default="aal_easy_loop_long.pcd"/>
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find gazebo_env)/worlds/$(arg world).world"/>
+        <arg name="paused" default="false"/>
+        <arg name="use_sim_time" default="true"/>
+        <arg name="headless" default="false"/>
+        <arg name="debug" default="false"/>
+        <arg name="verbose" value="true" />
+    </include>
+
+
+    <!-- Spawn in my bot -->
+    <param name="robot_description" textfile="$(find bot_description)/urdf/aal_bot.urdf"/>
+    <node name="mybot_spawn" 
+        pkg="gazebo_ros" 
+        type="spawn_model" 
+        output="screen"
+        args="-urdf 
+        -param robot_description 
+        -model aal_bot
+        -x 0 -y 0 -z 1" />
+
+    <!-- TF Tree -->
+    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+
+    <node pkg="tf" type="static_transform_publisher" 
+        name="odom_map_tf" 
+        args="0 0 0 0 0 0 1 /world /map 100" />
+
+
+    <!-- Load in map -->
+    <node pkg="pcl_ros" 
+        type="pcd_to_pointcloud" 
+        name="show_pointcloud" 
+        args="/home/conor/msc-project/pcd/2d/$(arg pcd) _frame_id:=/world" 
+        output="screen" />
+
+    <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+        <param name="resolution" value="0.1" />
+        <param name="frame_id" type="string" value="map" />
+        <!-- maximum range to integrate (speedup!) -->
+        <param name="sensor_model/max_range" value="100" />
+
+        <!-- data source to integrate (PointCloud2) -->
+        <remap from="cloud_in" to="/cloud_pcd" />
+        <remap from="/projected_map" to="/map"/>
+
+    </node>
+
+    <!-- fake_localization instead of amcl -->
+    <node pkg="fake_localization" 
+        type="fake_localization"
+        name="fake_localization"
+        clear_params="true"
+        output="screen">
+            <remap from="base_pose_ground_truth" to="odom"/>
+            <param name="global_frame_id" value="map"/>
+            <param name="base_frame_id" value="base_link" />
+    </node>
+
+    <!-- Move Base node -->
+    <node pkg="move_base"
+        type="move_base" 
+        name="move_base" 
+        output="screen">
+            <!-- Params for  move base: Costmap config -->
+            <rosparam file="$(find gazebo_env)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
+            <rosparam file="$(find gazebo_env)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+
+            <rosparam file="$(find gazebo_env)/config/local_costmap_params.yaml" command="load" /> 
+            <rosparam file="$(find gazebo_env)/config/global_costmap_params.yaml" command="load" /> 
+            <rosparam file="$(find gazebo_env)/config/base_local_planner_params.yaml" command="load" /> 
+    </node>
+    
+</launch>

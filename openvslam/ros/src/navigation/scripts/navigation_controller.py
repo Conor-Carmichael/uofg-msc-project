@@ -10,6 +10,9 @@ from actionlib_msgs.msg import GoalStatusArray
 # https://github.com/HotBlackRobotics/hotblackrobotics.github.io/blob/master/en/blog/_posts/2018-01-29-action-client-py.md
 
 
+status = 0
+
+
 
 class MoveBaseClient:
 
@@ -30,21 +33,23 @@ class MoveBaseClient:
 
     def send_goal(self, goal):
         self.client.send_goal(goal)
-        wait = self.client.wait_for_result()
-
-        if not wait:
-            rospy.logerr("Action server not available!")
-            rospy.signal_shutdown("Action server not available!")
         
-        else:
-            return_tup = (start, time.time(), self.client.get_result())
-            return return_tup
+        # wait = self.client.wait_for_result()
+
+        # if not wait:
+        #     rospy.logerr("Action server not available!")
+        #     rospy.signal_shutdown("Action server not available!")
+        
+        # else:
+        #     return_tup = (start, time.time(), self.client.get_result())
+        #     return return_tup
 
 
-    def callback(self):
-        if len(gsa.status_list) > 0:
-            status = int(gsa.status_list[0].status)
-            print(status)
+
+def callback(gsa):
+    global status
+    if len(gsa.status_list) > 0:
+        status = int(gsa.status_list[0].status)
 
         
 
@@ -54,28 +59,15 @@ def main():
     rospy.init_node('navigation_controller', anonymous=True)
     nav_client = MoveBaseClient()
 
-    status_subscriber = rospy.Subscriber('/move_base/status', GoalStatusArray, nav_client.callback)
-    
-    goal = MoveBaseGoal()
+    status_subscriber = rospy.Subscriber('/move_base/status', GoalStatusArray, callback)
 
-    goal.target_pose.header.frame_id = "map"
-    goal.target_pose.header.stamp = rospy.Time.now()
-
-    goal.target_pose.pose.position.x = 2
-    goal.target_pose.pose.position.y = 0
-
-    goal.target_pose.pose.orientation.w = 1.0
-
-    res = nav_client.send_goal(goal)
-
-
-
-    rospy.spin()
-
-
-
-
-    
+    goal_list = nav_client.get_goal_list()
+    for g in goal_list:
+        nav_client.send_goal(g)
+        print('Goal published {}'.format(g))
+        while status != 3:
+            time.sleep(1)
+   
 
 
 if __name__ == '__main__':

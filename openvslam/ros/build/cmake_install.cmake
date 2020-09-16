@@ -133,6 +133,7 @@ if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   include("/home/conor/msc-project/openvslam/ros/build/octomapping/cmake_install.cmake")
   include("/home/conor/msc-project/openvslam/ros/build/openvslam/cmake_install.cmake")
   include("/home/conor/msc-project/openvslam/ros/build/publisher/cmake_install.cmake")
+  include("/home/conor/msc-project/openvslam/ros/build/gazebo_ros_2Dmap_plugin/cmake_install.cmake")
 
 endif()
 

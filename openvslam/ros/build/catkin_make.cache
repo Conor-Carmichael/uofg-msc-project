@@ -1,2 +1,2 @@
-bot_description:camera_processing:gazebo_env:navigation:octomapping:openvslam:publisher
+bot_description:camera_processing:gazebo_env:gazebo_ros_2Dmap_plugin:navigation:octomapping:openvslam:publisher
 -DCATKIN_DEVEL_PREFIX=/home/conor/msc-project/openvslam/ros/devel -DCMAKE_INSTALL_PREFIX=/home/conor/msc-project/openvslam/ros/install -G Unix Makefiles

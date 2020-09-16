@@ -1,7 +1,7 @@
 <launch>
 
     <arg name="point_cloud_file" 
-        default="/home/conor/msc-project/openvslam/build/maps/museum_capture_2d.pcd"
+        default="/home/conor/msc-project/pcd/2d/aal_easy_loop_long.pcd"
     />
 
     <node pkg="pcl_ros" 
@@ -11,7 +11,7 @@
         output="screen" />
 
     <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
-        <param name="resolution" value="0.2" />
+        <param name="resolution" value="0.1" />
         <param name="frame_id" type="string" value="map" />
         <!-- maximum range to integrate (speedup!) -->
         <param name="sensor_model/max_range" value="100" />

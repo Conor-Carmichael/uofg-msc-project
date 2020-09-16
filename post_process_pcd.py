@@ -29,11 +29,18 @@ def get_point_list(lines):
 
     return np.array(points)
 
+def rotate_about_origin(p, rads):
+    x, y = p[0], p[1]
+    xx = x * math.cos(rads) + y * math.sin(rads)
+    yy = -x * math.sin(rads) + y * math.cos(rads)
+
+    return [xx, yy, p[2]]
 
 def rotate_points(points):
     rotated = []
     for point in points:
-        rotated.append([float(v)*-1.0 for v in point])
+        new_p = rotate_about_origin( [float(p) for p in point], 1.5708)
+        rotated.append(new_p)
     return rotated
 
 
@@ -126,14 +133,15 @@ if __name__ == "__main__":
     #
     try:
         map_name = sys.argv[1]  
+        save_name = sys.argv[2]
 
     except:
         print("Usage:\n$python post_process_pcd.py map_name (optional->)min_neighbors (optional->)radius")
         exit()
 
     try:
-        min_neighbors = sys.argv[2]
-        radius = sys.argv[3]
+        min_neighbors = sys.argv[3]
+        radius = sys.argv[4]
     except:
         print("Min Neighbor and Radius not supplied, usage:\n$python post_process_pcd.py map_name (optional->)min_neighbors (optional->)radius\nContinuing with default values. ")
 
