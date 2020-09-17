@@ -4,7 +4,7 @@
 <!-- Arguments for maps -->
 
     <arg name="world" default="easy_loop" />
-    <arg name="pcd"   default="aal_easy_loop_long.pcd"/>
+    <arg name="pcd"   default="easy_loop_long.pcd"/>
     <arg name="use_truth" default="false"/>
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">

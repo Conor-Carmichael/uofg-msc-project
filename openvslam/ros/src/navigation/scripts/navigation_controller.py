@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 import rospy, actionlib, os, sys, time, csv, math
-import numpy as np 
-# import pandas as pd 
+
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from actionlib_msgs.msg import GoalStatusArray
 from geometry_msgs.msg import PoseWithCovarianceStamped
@@ -64,6 +63,22 @@ def distance(p1, p2):
     return math.sqrt(x+y)
 
 
+def log_run_to_console(run_info):
+    print(run_info)
+
+def write_run_to_csv(map_name, run_info):
+    with open('/home/conor/msc-project/openvslam/ros/src/navigation/metrics/{}.csv'.format(map_name), 'w') as metrics_csv:
+        writer = csv.writer(metrics_csv)
+        writer.writerow(run_info.values())
+
+def post_fail_logging(letters, run_log):
+    for l in letters:
+        # End of nav goal, add in the goal specific metrics:
+        run_log['path_{}_failed'.format(l)] = 'n/a'
+        run_log['path_{}_dist'.format(l)] =  'n/a'
+        run_log['path_{}_time'.format(l)] = 'n/a'
+        run_log['pos_{}'.format(l)] = 'n/a'
+
 
 def status_callback(gsa):
     global status
@@ -79,71 +94,127 @@ def pose_callback(pcs):
 
 
 
-def main(fp, timeout):
+def main(fp, map_name, is_ground_truth, timeout):
     rospy.init_node('navigation_controller', anonymous=True)
     status_subscriber = rospy.Subscriber('/move_base/status', GoalStatusArray, status_callback)
     pose_subscriber = rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, pose_callback)
 
     nav_client = MoveBaseClient(fp)
-    # map_metrics = pd.read_csv(PATH, header=0)
-    # columns = map_metrics.columns
 
-    print("""
-            Starting navigation goal evaulation.
-            {} 2d Nav Goals to run.
-        """.format( len(nav_client.goals)) )
+    run_log_helper = ['a','b','c','d'] #to help logging to the dict
+    map_gen = 'ground_truth' if is_ground_truth.lower()=='true' else 'openvslam'
+    run_log = {
+        'map': map_name,
+        'map_generator':map_gen,
+        'start_pos': [0,0],
+        'path_a_failed':None,
+        'path_a_dist':None,
+        'path_a_time':None,
+        'end_pos_a':None,
+        'path_b_failed':None,
+        'path_b_dist':None,
+        'path_b_time':None,
+        'end_pos_b':None,
+        'path_c_failed':None,
+        'path_c_dist':None,
+        'path_c_time':None,
+        'end_pos_c':None,
+        'path_d_failed':None,
+        'path_d_dist':None,
+        'path_d_time':None,
+        'end_pos_d':None,
+        'total_dist':None,
+        'total_time': None
+    }
 
 
-    # start_pose = [0,0,0] #Logic doesnt work here on second + loop
+    print("Starting navigation goal evaulation.\n{} 2d Nav Goals to run.".format( len(nav_client.goals)) )
+
+
+    # Total loop tracking variables
+    loop_start_time = time.time()
+    loop_total_distance = 0.0
+
     last_pose = [0,0]
 
-    for g_num, g in enumerate(nav_client.goals):
-        print("Executing Navigation Goal {}".format(g_num))
-        nav_client.send_goal(g)
+    ####################################################
+    #
+    #   Start of the loop for sending each intermediate navigation goal
+    #
+    ####################################################
 
-        failed = False
-        goal_pose = g
+    for goal_num, goal in enumerate(nav_client.goals):
+        # Send goal, then enter 'wait for success' loop
+        path_let = run_log_helper[goal_num]
 
-        start_time = time.time()
-        path_distance = 0.0
+        print("Executing Navigation Goal {}".format(path_let))
+        nav_client.send_goal(goal)
+
+        # Individual path tracking variables
+        path_failed = False 
+        path_start_time = time.time()
+        path_distance_travelled = 0.0
 
         while status != 3:
-            path_distance += distance(last_pose, pose)
+            path_distance_travelled += distance(last_pose, pose)
             last_pose = pose
 
-            if (time.time() - start_time) > timeout:
+            if (time.time() - path_start_time) > timeout:
                 print('Failed routine.')
-                failed = True
+                path_failed = True
                 break
 
-        end_time = time.time() 
+    
 
-        print("""\n
+        # End of nav goal, add in the goal specific metrics:
+        run_log['path_{}_failed'.format(path_let)] = path_failed
+        run_log['path_{}_dist'.format(path_let)] =  None if path_failed else path_distance_travelled
+        run_log['path_{}_time'.format(path_let)] = None if path_failed else time.time() - path_start_time
+        run_log['end_pos_{}'.format(path_let)] = None if path_failed else last_pose
 
-            Path {}
-            {} ----> {}
-            x: {}--> {}
-            y: {}--> {}
+        #Accumulate distance metric
+        run_total_distance += path_distance_travelled
 
-            Time taken: ............{}s
-            Distance travelled: ....{}m\n\n
-        """.format( "Failed" if failed else "Completed",
-                    g_num, g_num+1, 
-                    nav_client.goals[g_num-1].target_pose.pose.position.x, g.target_pose.pose.position.x,
-                    nav_client.goals[g_num-1].target_pose.pose.position.y, g.target_pose.pose.position.y,
-                    end_time-start_time, path_distance))
+        # If the navigation goal was failed, break out of for loop, and log others as N/A
+        if path_failed:
+            # Log the rest as n/a
+            remaining = run_log_helper[goal_num+1:]
+            post_fail_logging(remaining, run_log)
+            break
 
 
+    ####################################
+    #
+    #           Post Loop
+    #
+    ####################################
     print('\nAll navigation goals have been completed.\n')
+
+    #Add full loop metrics to the run log:
+    run_log['total_time'] = time.time() - loop_start_time
+    run_log['total_dist'] = loop_total_distance
+
+
+    print('Writing results...')
+    write_run_to_csv(map_name, run_log)
+    print("Results have been stored.")
+
+
    
 
 if __name__ == '__main__':
-    map_name = sys.argv[1] 
-    ground_truth = sys.argv[2]
+    try: 
+        map_name = sys.argv[1] 
+        ground_truth = sys.argv[2]
+    except IndexError as e:
+        print('Usage: $python navigation_controller.py mapname using_ground_truth (optional- timeout, default 150)')
+
     timeout = 150
     try:
         timeout = sys.argv[3]
     except:
         print('Timeout defaulting to 120s.')
+        
     fp = os.path.join('/','home', 'conor','msc-project', 'openvslam','ros','src','navigation','goal_sets', map_name+'.csv')
-    main(fp, timeout)
+    main(fp, map_name, ground_truth, timeout)
+

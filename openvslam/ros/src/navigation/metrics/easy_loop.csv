@@ -1,1 +1,1 @@
-using_ground_truth, start_pose, a_pose, b_pose
+map, map_generator, start_pos, path_a_dist, path_a_time, pos_a, path_b_dist, path_b_time, pos_b, path_c_dist, path_c_time, pos_c,  path_d_dist, path_d_time,  pos_d, total_dist, total_time 
