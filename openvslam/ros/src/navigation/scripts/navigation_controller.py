@@ -67,11 +67,6 @@ def distance(p1, p2):
 def log_run_to_console(run_info):
     print(run_info)
 
-# def write_run_to_csv(map_name, run_info):
-#     vals = run_info.values()
-#     vals = [str(v) for v in vals]
-#     with open('/home/conor/msc-project/openvslam/ros/src/navigation/metrics/{}.csv'.format(map_name), 'a') as metrics_csv:
-#         metrics_csv.write(','.join(vals)+'\n')
 
 def post_fail_logging(letters, run_log):
     for l in letters:
@@ -80,6 +75,12 @@ def post_fail_logging(letters, run_log):
         run_log['path_{}_dist'.format(l)] =  'n/a'
         run_log['path_{}_time'.format(l)] = 'n/a'
         run_log['pos_{}'.format(l)] = 'n/a'
+
+def sort_values_by_cols(cols, dict):
+    ret_arr = []
+    for col in cols:
+        ret_arr.append(dict[col])
+    return ret_arr
 
 
 #################
@@ -101,46 +102,61 @@ def pose_callback(pcs):
 
 
 
-def main(fp, map_name, is_ground_truth, timeout):
+def main(goals_fp, metrics_fp, map_name, is_ground_truth, timeout):
     global status 
 
     rospy.init_node('navigation_controller', anonymous=True)
     status_subscriber = rospy.Subscriber('/move_base/status', GoalStatusArray, status_callback)
     pose_subscriber = rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, pose_callback)
 
-    metrics_df = pd.read_csv('/home/conor/msc-project/openvslam/ros/src/navigation/metrics/{}.csv'.format(map_name), header=0)
-    nav_client = MoveBaseClient(fp)
+    cols = ['time_run', 'map', 'map_generator', 
+        'path_a_failed', 'path_a_dist', 'path_a_time', 
+        'path_b_failed', 'path_b_dist', 'path_b_time', 
+        'path_c_failed', 'path_c_dist', 'path_c_time', 
+        'path_d_failed', 'path_d_dist', 'path_d_time', 
+        'total_dist', 'total_time']
+
+    if os.path.exists(metrics_fp):
+        print('\t\t*Metrics file exists, opening to append.\n')
+        csv = open(metrics_fp, 'a')
+    else:
+        print('\t\t*Metrics file doesnt exist, creating, writing columns.\n')
+        csv = open(metrics_fp, 'w')
+        csv.write(', '.join(cols)+'\n')
+
+
+    nav_client = MoveBaseClient(goals_fp)
 
     run_log_helper = ['a','b','c','d'] #to help logging to the dict
     map_gen = 'ground_truth' if is_ground_truth.lower()=='true' else 'openvslam'
-    print(map_gen)
-    print(map_name)
+
     run_log = {
         'map': map_name,
         'map_generator':map_gen,
     }
 
 
-    print("Starting navigation goal evaulation.\n{} 2d Nav Goals to run.".format( len(nav_client.goals)) )
+    print("\-_____Running {} 2d Nav Goals______-\n\n".format( len(nav_client.goals)) )
 
 
     # Total loop tracking variables
     loop_start_time = time.time()
     loop_total_distance = 0.0
-
+    # To calculate distance each step
     last_pose = [0,0]
 
-    ####################################################
-    #
-    #   Start of the loop for sending each intermediate navigation goal
-    #
-    ####################################################
+
+    #####################################################################
+    #                                                                   #
+    #   Start of the loop for sending each intermediate navigation goal #
+    #                                                                   #
+    #####################################################################
 
     for goal_num, goal in enumerate(nav_client.goals):
-        # Send goal, then enter 'wait for success' loop
-        path_let = run_log_helper[goal_num]
 
-        print("Executing Navigation Goal {}".format(path_let))
+        path_let = run_log_helper[goal_num] #just gets letter assoc with the path.
+
+        print("---Executing Navigation Goal {}".format(path_let))
         nav_client.send_goal(goal)
 
         # Individual path tracking variables
@@ -157,11 +173,13 @@ def main(fp, map_name, is_ground_truth, timeout):
                 path_failed = True
                 print("Navigation Goal {} failed. Breaking, logging.".format(path_let))
                 break
+
+        #Status <-- 3; Means nav complete. 
         #Need to manually set. Proceeds to fast for the subscriber to get the new value.
         status = 0
     
 
-        # End of nav goal, add in the goal specific metrics:
+        # End of nav goal, add in the path specific metrics:
         run_log['path_{}_failed'.format(path_let)] = path_failed
         run_log['path_{}_dist'.format(path_let)] =  'None' if path_failed else path_distance_travelled
         run_log['path_{}_time'.format(path_let)] = 'None' if path_failed else time.time() - path_start_time
@@ -177,25 +195,29 @@ def main(fp, map_name, is_ground_truth, timeout):
             break
 
 
-    ####################################
-    #                                  #
-    #           Post Loop              #
-    #                                  #
-    ####################################
-    print('\nAll navigation goals have been completed.\n')
-    run_log['id'] = loop_start_time
+    #####################################################################
+    #                                                                   #
+    #                        Post Loop                                  #
+    #                                                                   #
+    #####################################################################
+    
+    run_log['time_run'] = loop_start_time    
     run_log['total_time'] = time.time() - loop_start_time
     run_log['total_dist'] = loop_total_distance
 
+    print('\nAll navigation goals have been completed.\nWriting results...')
+    new_row = sort_values_by_cols(cols, run_log)
+    new_row = [str(v) for v in new_row]
+    csv.write(', '.join(new_row)+'\n')
 
-    print('Writing results...')
-    metrics_df = metrics_df.append(run_log, ignore_index=True)
-    metrics_df.to_csv('/home/conor/msc-project/openvslam/ros/src/navigation/metrics/{}.csv'.format(map_name))
     print("Results have been stored.")
+    csv.close()
+
+#----------------------------------------- End of main(...) -----------------------------------------#
 
 
-   
 
+# Runner: deals with terminal args
 if __name__ == '__main__':
     try: 
         map_name = sys.argv[1] 
@@ -207,8 +229,10 @@ if __name__ == '__main__':
     try:
         timeout = sys.argv[3]
     except:
-        print('Timeout defaulting to 120s.')
+        print('\t\t*Timeout defaulting to 120s')
         
-    fp = os.path.join('/','home', 'conor','msc-project', 'openvslam','ros','src','navigation','goal_sets', map_name+'.csv')
-    main(fp, map_name, ground_truth, timeout)
+    goal_fp = os.path.join('/','home', 'conor','msc-project', 'openvslam','ros','src','navigation','goal_sets', map_name+'.csv')
+    metrics_fp = os.path.join('/','home', 'conor','msc-project', 'openvslam','ros','src','navigation','metrics', map_name+'.csv')
+
+    main(goal_fp, metrics_fp, map_name, ground_truth, timeout)
 
