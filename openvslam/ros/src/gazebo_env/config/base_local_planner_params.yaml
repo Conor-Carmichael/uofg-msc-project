@@ -15,6 +15,4 @@ TrajectoryPlannerROS:
   yaw_goal_tolerance: 3.14
   xy_goal_tolerance: 0.75
 
-  controller_frequency: 60
-
   holonomic_robot: false

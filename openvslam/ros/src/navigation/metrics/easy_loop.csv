@@ -1,3 +1,8 @@
 time_run, map, map_generator, path_a_failed, path_a_dist, path_a_time, path_b_failed, path_b_dist, path_b_time, path_c_failed, path_c_dist, path_c_time, path_d_failed, path_d_dist, path_d_time, total_dist, total_time
 1600378505.46, easy_loop, ground_truth, False, 2.88469344092, 19.5701961517, False, 2.05643286827, 15.4685950279, False, 3.18975602061, 22.6812360287, False, 2.86656580352, 22.6731359959, 10.9974481333, 80.3942489624
 1600378642.76, easy_loop, ground_truth, False, 2.29857240763, 19.5446679592, False, 2.24825874872, 16.029102087, False, 3.05821197716, 22.1732661724, False, 2.79393651837, 22.4276678562, 10.3989796519, 80.175481081
+1600379984.71, easy_loop, ground_truth, False, 2.48843732349, 20.3176589012, True, None, None, n/a, n/a, n/a, n/a, n/a, n/a, 2.49933681843, 170.31906414
+1600380943.39, easy_loop, openvslam, False, 2.72683879217, 20.3329641819, True, None, None, n/a, n/a, n/a, n/a, n/a, n/a, 2.75659180481, 170.333929062
+1600381239.78, easy_loop, openvslam, False, 0.0, 2.86102294922e-06, True, None, None, n/a, n/a, n/a, n/a, n/a, n/a, 1.20538790437, 150.001569033
+1600381415.71, easy_loop, ground_truth, False, 2.41164217722, 19.5156018734, False, 2.10451859495, 15.8281290531, False, 2.87592153363, 22.5803611279, False, 2.70371330993, 22.382021904, 10.0957956157, 80.3085899353
+1600384064.29, easy_loop, openvslam, False, 2.74820609896, 20.3166680336, True, None, None, n/a, n/a, n/a, n/a, n/a, n/a, 2.7582903589, 170.317409992

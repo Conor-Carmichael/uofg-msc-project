@@ -108,7 +108,7 @@ def main(goals_fp, metrics_fp, map_name, is_ground_truth, timeout):
     rospy.init_node('navigation_controller', anonymous=True)
     status_subscriber = rospy.Subscriber('/move_base/status', GoalStatusArray, status_callback)
     pose_subscriber = rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, pose_callback)
-
+    
     cols = ['time_run', 'map', 'map_generator', 
         'path_a_failed', 'path_a_dist', 'path_a_time', 
         'path_b_failed', 'path_b_dist', 'path_b_time', 
@@ -134,10 +134,10 @@ def main(goals_fp, metrics_fp, map_name, is_ground_truth, timeout):
         'map': map_name,
         'map_generator':map_gen,
     }
+    print("\t\t*Based on {} map of {}\n".format(map_gen, map_name))
 
 
-    print("\-_____Running {} 2d Nav Goals______-\n\n".format( len(nav_client.goals)) )
-
+    print("-_____Running {} 2d Nav Goals______-\n\n".format( len(nav_client.goals)) )
 
     # Total loop tracking variables
     loop_start_time = time.time()
@@ -157,6 +157,8 @@ def main(goals_fp, metrics_fp, map_name, is_ground_truth, timeout):
         path_let = run_log_helper[goal_num] #just gets letter assoc with the path.
 
         print("---Executing Navigation Goal {}".format(path_let))
+
+        goal.target_pose.header.stamp = rospy.Time.now()
         nav_client.send_goal(goal)
 
         # Individual path tracking variables

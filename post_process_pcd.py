@@ -44,12 +44,12 @@ def rotate_points(points):
     return rotated
 
 
-def rescale(points, scale_fact_width=3, scale_fact_length=2.75):
+def rescale(points, scale_fact_x=3, scale_fact_y=3.00):
     resc = []
     for point in points:
         p = [float(v) for v in point]
-        resc.append([p[0]*scale_fact_width,
-            p[1]*scale_fact_length, 
+        resc.append([p[0]*scale_fact_x,
+            p[1]*scale_fact_y, 
             p[2]])
 
     return resc

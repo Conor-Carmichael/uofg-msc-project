@@ -4,7 +4,7 @@
 <!-- Arguments for maps -->
 
     <arg name="world" default="easy_loop" />
-    <arg name="pcd"   default="easy_loop_long.pcd"/>
+    <!-- <arg name="pcd"   default="easy_loop_long.pcd"/> -->
     <arg name="use_truth" default="false"/>
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -44,29 +44,11 @@
             args="$(find gazebo_env)/truth_files/$(arg world).yaml" />
     </group>
 
-    <!-- Using ocotomap if not using ground truth -->
-    <group if="$(eval arg('use_truth') ==false)">
-
-        <!-- Load in cloud -->
-        <node pkg="pcl_ros" 
-            type="pcd_to_pointcloud" 
-            name="show_pointcloud" 
-            args="/home/conor/msc-project/pcd/2d/$(arg pcd) _frame_id:=/world" 
-            output="screen" />
-
-        <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
-            <param name="resolution" value="0.1" />
-            <param name="frame_id" type="string" value="map" />
-            <!-- maximum range to integrate (speedup!) -->
-            <param name="sensor_model/max_range" value="100" />
-
-            <!-- data source to integrate (PointCloud2) -->
-            <remap from="cloud_in" to="/cloud_pcd" />
-            <remap from="/projected_map" to="/map"/>
-
-        </node>
+    <!-- if not using ground truth -->
+    <group if="$(eval arg('use_truth')==false)">
+        <node pkg="map_server" type="map_server" name="openvslam_map_server"
+            args="$(find gazebo_env)/openvslam_maps/$(arg world).yaml" />
     </group>
-
 
 
     <!-- fake_localization instead of amcl -->
