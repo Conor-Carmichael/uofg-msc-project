@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import rospy, actionlib, os, sys, time, csv, math
+import pandas as pd
 
 from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from actionlib_msgs.msg import GoalStatusArray
@@ -46,7 +47,7 @@ class MoveBaseClient:
         return goal_list
 
 
-    def send_goal(self, goal):
+    def send_goal(self, goal): 
         self.client.send_goal(goal)
         
 
@@ -66,10 +67,11 @@ def distance(p1, p2):
 def log_run_to_console(run_info):
     print(run_info)
 
-def write_run_to_csv(map_name, run_info):
-    with open('/home/conor/msc-project/openvslam/ros/src/navigation/metrics/{}.csv'.format(map_name), 'w') as metrics_csv:
-        writer = csv.writer(metrics_csv)
-        writer.writerow(run_info.values())
+# def write_run_to_csv(map_name, run_info):
+#     vals = run_info.values()
+#     vals = [str(v) for v in vals]
+#     with open('/home/conor/msc-project/openvslam/ros/src/navigation/metrics/{}.csv'.format(map_name), 'a') as metrics_csv:
+#         metrics_csv.write(','.join(vals)+'\n')
 
 def post_fail_logging(letters, run_log):
     for l in letters:
@@ -80,8 +82,13 @@ def post_fail_logging(letters, run_log):
         run_log['pos_{}'.format(l)] = 'n/a'
 
 
+#################
+#   Callbacks   #
+#################
+
 def status_callback(gsa):
     global status
+    
     if len(gsa.status_list) > 0:
         status = int(gsa.status_list[-1].status)
     else:
@@ -95,36 +102,22 @@ def pose_callback(pcs):
 
 
 def main(fp, map_name, is_ground_truth, timeout):
+    global status 
+
     rospy.init_node('navigation_controller', anonymous=True)
     status_subscriber = rospy.Subscriber('/move_base/status', GoalStatusArray, status_callback)
     pose_subscriber = rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, pose_callback)
 
+    metrics_df = pd.read_csv('/home/conor/msc-project/openvslam/ros/src/navigation/metrics/{}.csv'.format(map_name), header=0)
     nav_client = MoveBaseClient(fp)
 
     run_log_helper = ['a','b','c','d'] #to help logging to the dict
     map_gen = 'ground_truth' if is_ground_truth.lower()=='true' else 'openvslam'
+    print(map_gen)
+    print(map_name)
     run_log = {
         'map': map_name,
         'map_generator':map_gen,
-        'start_pos': [0,0],
-        'path_a_failed':None,
-        'path_a_dist':None,
-        'path_a_time':None,
-        'end_pos_a':None,
-        'path_b_failed':None,
-        'path_b_dist':None,
-        'path_b_time':None,
-        'end_pos_b':None,
-        'path_c_failed':None,
-        'path_c_dist':None,
-        'path_c_time':None,
-        'end_pos_c':None,
-        'path_d_failed':None,
-        'path_d_dist':None,
-        'path_d_time':None,
-        'end_pos_d':None,
-        'total_dist':None,
-        'total_time': None
     }
 
 
@@ -162,18 +155,19 @@ def main(fp, map_name, is_ground_truth, timeout):
             if (time.time() - path_start_time) > timeout:
                 print('Failed routine.')
                 path_failed = True
+                print("Navigation Goal {} failed. Breaking, logging.".format(path_let))
                 break
-
+        #Need to manually set. Proceeds to fast for the subscriber to get the new value.
+        status = 0
     
 
         # End of nav goal, add in the goal specific metrics:
         run_log['path_{}_failed'.format(path_let)] = path_failed
-        run_log['path_{}_dist'.format(path_let)] =  None if path_failed else path_distance_travelled
-        run_log['path_{}_time'.format(path_let)] = None if path_failed else time.time() - path_start_time
-        run_log['end_pos_{}'.format(path_let)] = None if path_failed else last_pose
+        run_log['path_{}_dist'.format(path_let)] =  'None' if path_failed else path_distance_travelled
+        run_log['path_{}_time'.format(path_let)] = 'None' if path_failed else time.time() - path_start_time
 
         #Accumulate distance metric
-        run_total_distance += path_distance_travelled
+        loop_total_distance += path_distance_travelled
 
         # If the navigation goal was failed, break out of for loop, and log others as N/A
         if path_failed:
@@ -184,19 +178,19 @@ def main(fp, map_name, is_ground_truth, timeout):
 
 
     ####################################
-    #
-    #           Post Loop
-    #
+    #                                  #
+    #           Post Loop              #
+    #                                  #
     ####################################
     print('\nAll navigation goals have been completed.\n')
-
-    #Add full loop metrics to the run log:
+    run_log['id'] = loop_start_time
     run_log['total_time'] = time.time() - loop_start_time
     run_log['total_dist'] = loop_total_distance
 
 
     print('Writing results...')
-    write_run_to_csv(map_name, run_log)
+    metrics_df = metrics_df.append(run_log, ignore_index=True)
+    metrics_df.to_csv('/home/conor/msc-project/openvslam/ros/src/navigation/metrics/{}.csv'.format(map_name))
     print("Results have been stored.")
 
 

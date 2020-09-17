@@ -8,8 +8,6 @@
     <arg name="use_sim_time" default="true"/>
     <arg name="verbose" value="true" />
 
-    <!-- Choose robot to work with -->
-    <arg name='bot' default='aal_bot' />
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="world_name" value="$(find gazebo_env)/worlds/$(arg map).world"/>

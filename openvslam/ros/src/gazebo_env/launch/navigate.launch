@@ -6,6 +6,7 @@
     <arg name="world" default="easy_loop" />
     <arg name="pcd"   default="easy_loop_long.pcd"/>
     <arg name="use_truth" default="false"/>
+    <!-- <arg name="real_time_update_rate" default="2.0" /> -->
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="world_name" value="$(find gazebo_env)/worlds/$(arg world).world"/>
@@ -85,7 +86,6 @@
         type="move_base" 
         name="move_base" 
         output="screen">
-            <param name="planner_frequency" value="0.0" />
             
             <!-- Params for  move base: Costmap config -->
             <rosparam file="$(find gazebo_env)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
