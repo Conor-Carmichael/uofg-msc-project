@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 
 import rospy, actionlib, os, sys, time, csv, math
-import pandas as pd
 
-from move_base_msgs.msg import MoveBaseAction, MoveBaseGoal
 from actionlib_msgs.msg import GoalStatusArray
-from geometry_msgs.msg import PoseWithCovarianceStamped
+from geometry_msgs.msg import PoseWithCovarianceStamped, PoseStamped
 # Reference for this code:
+# Made my own publisher, but followed this setup
 # https://github.com/HotBlackRobotics/hotblackrobotics.github.io/blob/master/en/blog/_posts/2018-01-29-action-client-py.md
 
 
@@ -14,17 +13,11 @@ status = 0
 pose = 0
 
 #___________________________Move Base Client Class___________________________#
-
 class MoveBaseClient:
 
-
     def __init__(self, goal_file):
-        self.client = actionlib.SimpleActionClient('move_base', MoveBaseAction)
-        self.client.wait_for_server()
+        self.client = rospy.Publisher('/move_base_simple/goal', PoseStamped, queue_size=10)
         self.goals = self.get_goals(goal_file)
-        
-        # to store goal to retrieve from a list of goals
-        self.goal_ind = 0                   
 
 
     def get_goals(self, file):
@@ -35,23 +28,29 @@ class MoveBaseClient:
         with open(file, 'r') as goals_file:
             goals_reader = csv.reader(goals_file, delimiter=',')
             for row in goals_reader:
-                goal = MoveBaseGoal()
-                goal.target_pose.header.frame_id = "map"
-                goal.target_pose.header.stamp = rospy.Time.now()
-                goal.target_pose.pose.position.x = float(row[0])
-                goal.target_pose.pose.position.y = float(row[1])
-                goal.target_pose.pose.orientation.w = 1.0
-
+                goal = PoseStamped()
+                goal.header.frame_id = "map"
+                goal.header.stamp = rospy.Time.now()
+                goal.pose.position.x = float(row[0])
+                goal.pose.position.y = float(row[1])
+                goal.pose.orientation.w = 1
+                print(goal)
                 goal_list.append(goal)
 
         return goal_list
 
 
     def send_goal(self, goal): 
-        self.client.send_goal(goal)
+        self.client.publish(goal)
         
 
 #___________________________End Class___________________________#
+
+
+#################
+#   General     #
+#################
+
 
 def distance(p1, p2):
     # on x, y axes
@@ -103,11 +102,20 @@ def pose_callback(pcs):
 
 
 def main(goals_fp, metrics_fp, map_name, is_ground_truth, timeout):
+
+    #####################################################################
+    #                                                                   #
+    #   Setup for run: Reading/creating metric file, setting up logging #
+    #                                                                   #
+    #####################################################################
+
     global status 
 
     rospy.init_node('navigation_controller', anonymous=True)
     status_subscriber = rospy.Subscriber('/move_base/status', GoalStatusArray, status_callback)
     pose_subscriber = rospy.Subscriber('/amcl_pose', PoseWithCovarianceStamped, pose_callback)
+    rospy.spin()
+
     
     cols = ['time_run', 'map', 'map_generator', 
         'path_a_failed', 'path_a_dist', 'path_a_time', 
@@ -151,14 +159,14 @@ def main(goals_fp, metrics_fp, map_name, is_ground_truth, timeout):
     #   Start of the loop for sending each intermediate navigation goal #
     #                                                                   #
     #####################################################################
-
+    
     for goal_num, goal in enumerate(nav_client.goals):
 
         path_let = run_log_helper[goal_num] #just gets letter assoc with the path.
 
         print("---Executing Navigation Goal {}".format(path_let))
 
-        goal.target_pose.header.stamp = rospy.Time.now()
+
         nav_client.send_goal(goal)
 
         # Individual path tracking variables
@@ -167,14 +175,15 @@ def main(goals_fp, metrics_fp, map_name, is_ground_truth, timeout):
         path_distance_travelled = 0.0
 
         while status != 3:
-            path_distance_travelled += distance(last_pose, pose)
-            last_pose = pose
 
             if (time.time() - path_start_time) > timeout:
                 print('Failed routine.')
                 path_failed = True
                 print("Navigation Goal {} failed. Breaking, logging.".format(path_let))
                 break
+            else:
+                path_distance_travelled += distance(last_pose, pose)
+                last_pose = pose
 
         #Status <-- 3; Means nav complete. 
         #Need to manually set. Proceeds to fast for the subscriber to get the new value.
@@ -213,6 +222,8 @@ def main(goals_fp, metrics_fp, map_name, is_ground_truth, timeout):
     csv.write(', '.join(new_row)+'\n')
 
     print("Results have been stored.")
+
+    # nav_client.cancel()
     csv.close()
 
 #----------------------------------------- End of main(...) -----------------------------------------#
@@ -231,7 +242,7 @@ if __name__ == '__main__':
     try:
         timeout = sys.argv[3]
     except:
-        print('\t\t*Timeout defaulting to 120s')
+        print('\t\t*Timeout defaulting to 150s')
         
     goal_fp = os.path.join('/','home', 'conor','msc-project', 'openvslam','ros','src','navigation','goal_sets', map_name+'.csv')
     metrics_fp = os.path.join('/','home', 'conor','msc-project', 'openvslam','ros','src','navigation','metrics', map_name+'.csv')

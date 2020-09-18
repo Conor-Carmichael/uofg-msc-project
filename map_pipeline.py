@@ -11,10 +11,9 @@ Sub-Scripts must take in a full file path, so this file makes full paths, passes
 
 def check_args(args):
 
-    if len(args) != 3:
+    if len(args) != 2:
         print('Usage:\n$python map_pipeline.py \
-            map:[museum, alley] \
-            mapping_type:[quick, long]')
+            map:[easy, medium, hard] ')
         return False
     else:
         return True

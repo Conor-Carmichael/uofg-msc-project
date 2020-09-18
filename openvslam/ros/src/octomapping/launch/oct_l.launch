@@ -1,7 +1,7 @@
 <launch>
-
+    <arg name='id' default='easy_loop'/>
     <arg name="point_cloud_file" 
-        default="/home/conor/msc-project/pcd/2d/aal_easy_loop_long.pcd"
+        default="/home/conor/msc-project/pcd/2d/$(arg id).pcd"
     />
 
     <node pkg="pcl_ros" 

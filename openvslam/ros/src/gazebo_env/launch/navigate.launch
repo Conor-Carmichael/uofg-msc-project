@@ -3,12 +3,12 @@
 
 <!-- Arguments for maps -->
 
-    <arg name="world" default="easy_loop" />
-    <!-- <arg name="pcd"   default="easy_loop_long.pcd"/> -->
+    <arg name="map" default="easy" />
     <arg name="use_truth" default="false"/>
+    <arg name="create_yaml" default="false" />
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
-        <arg name="world_name" value="$(find gazebo_env)/worlds/$(arg world).world"/>
+        <arg name="world_name" value="$(find gazebo_env)/worlds/$(arg map).world"/>
         <arg name="paused" default="false"/>
         <arg name="use_sim_time" default="true"/>
         <arg name="headless" default="false"/>
@@ -36,18 +36,46 @@
         name="odom_map_tf" 
         args="0 0 0 0 0 0 1 /world /map 100" />
 
-    
+
+<!-- If I need to create a yaml file for the map -->
+    <group if="$(arg create_yaml)">
+        <arg name="point_cloud_file" 
+            default="/home/conor/msc-project/pcd/2d/$(arg map).pcd"
+        />
+
+        <node pkg="pcl_ros" 
+            type="pcd_to_pointcloud" 
+            name="show_pointcloud" 
+            args="$(arg point_cloud_file) _frame_id:=/world" 
+            output="screen" />
+
+        <node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+            <param name="resolution" value="0.1" />
+            <param name="frame_id" type="string" value="map" />
+            <!-- maximum range to integrate (speedup!) -->
+            <param name="sensor_model/max_range" value="100" />
+
+            <!-- data source to integrate (PointCloud2) -->
+            <remap from="cloud_in" to="/cloud_pcd" />
+            <remap from="/projected_map" to="/map"/>
+
+        </node>
+
+
+    </group>
+
+
 
     <!-- If intending to use ground truth map, need to use map server node -->
     <group if="$(arg use_truth)">
         <node pkg="map_server" type="map_server" name="ground_truth_map_server"
-            args="$(find gazebo_env)/truth_files/$(arg world).yaml" />
+            args="$(find gazebo_env)/truth_files/$(arg map).yaml" />
     </group>
 
     <!-- if not using ground truth -->
     <group if="$(eval arg('use_truth')==false)">
-        <node pkg="map_server" type="map_server" name="openvslam_map_server"
-            args="$(find gazebo_env)/openvslam_maps/$(arg world).yaml" />
+        <node pkg="map_server" type="map_server" name="generated_map"
+            args="$(find gazebo_env)/openvslam_maps/$(arg map).yaml" />
     </group>
 
 
@@ -69,12 +97,16 @@
         output="screen">
             
             <!-- Params for  move base: Costmap config -->
-            <rosparam file="$(find gazebo_env)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
-            <rosparam file="$(find gazebo_env)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+            <rosparam file="$(find navigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
+            <rosparam file="$(find navigation)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
 
-            <rosparam file="$(find gazebo_env)/config/local_costmap_params.yaml" command="load" /> 
-            <rosparam file="$(find gazebo_env)/config/global_costmap_params.yaml" command="load" /> 
-            <rosparam file="$(find gazebo_env)/config/base_local_planner_params.yaml" command="load" /> 
+            <rosparam file="$(find navigation)/config/local_costmap_params.yaml" command="load" /> 
+            <rosparam file="$(find navigation)/config/global_costmap_params.yaml" command="load" /> 
+            <rosparam file="$(find navigation)/config/base_local_planner_params.yaml" command="load" />
+
+            <!-- <param name="controller_frequency" value="1" />  -->
     </node>
+
+    <node pkg='rviz' type='rviz' name='rviz_launch' />
     
 </launch>
