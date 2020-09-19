@@ -1,4 +1,4 @@
-image: easy_loop.pgm
+image: src/gazebo_env/truth_files/easy.pgm
 resolution: 0.100000
 origin: [-20.000000, -20.000000, 0.000000]
 negate: 0

@@ -1,5 +1,14 @@
 <sdf version='1.6'>
   <world name='default'>
+
+    <!-- <plugin name='gazebo_occupancy_map' filename='libgazebo_2Dmap_plugin.so'>
+      <map_resolution>0.1</map_resolution>
+      <map_height>0.3</map_height>         
+      <map_size_x>40</map_size_x>
+      <map_size_y>40</map_size_y>          
+    </plugin>  -->
+
+
     <gravity>0 0 -9.8</gravity>
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
     <atmosphere type='adiabatic'/>
