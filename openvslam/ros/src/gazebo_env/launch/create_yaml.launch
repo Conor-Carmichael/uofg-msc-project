@@ -6,7 +6,7 @@
     <arg name="map" default="easy" />
 
 
-    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <!-- <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="world_name" value="$(find gazebo_env)/worlds/$(arg map).world"/>
         <arg name="paused" default="false"/>
         <arg name="use_sim_time" default="true"/>
@@ -14,7 +14,7 @@
         <arg name="debug" default="false"/>
         <arg name="verbose" value="true" />
     </include>
-
+ -->
 
     <!-- Spawn in my bot -->
     <param name="robot_description" textfile="$(find bot_description)/urdf/aal_bot.urdf"/>
@@ -80,12 +80,12 @@
         output="screen">
             
             <!-- Params for  move base: Costmap config -->
-            <rosparam file="$(find gazebo_env)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
-            <rosparam file="$(find gazebo_env)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
+            <rosparam file="$(find navigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
+            <rosparam file="$(find navigation)/config/costmap_common_params.yaml" command="load" ns="local_costmap" />
 
-            <rosparam file="$(find gazebo_env)/config/local_costmap_params.yaml" command="load" /> 
-            <rosparam file="$(find gazebo_env)/config/global_costmap_params.yaml" command="load" /> 
-            <rosparam file="$(find gazebo_env)/config/base_local_planner_params.yaml" command="load" /> 
+            <rosparam file="$(find navigation)/config/local_costmap_params.yaml" command="load" /> 
+            <rosparam file="$(find navigation)/config/global_costmap_params.yaml" command="load" /> 
+            <rosparam file="$(find navigation)/config/base_local_planner_params.yaml" command="load" /> 
     </node>
     
     <node pkg="map_server" type="map_saver" name='mapserver' args="-f $(find gazebo_env)/openvslam_maps/$(arg map)" />
