@@ -7,11 +7,13 @@ from  move_base_msgs.msg import MoveBaseActionGoal, MoveBaseGoal
 from std_msgs.msg import Header
 from actionlib_msgs.msg import GoalID
 
-# Reference for this code:
-# Made my own publisher, but followed this setup
-# https://github.com/HotBlackRobotics/hotblackrobotics.github.io/blob/master/en/blog/_posts/2018-01-29-action-client-py.md
+# References for this code:
+# [1] https://github.com/HotBlackRobotics/hotblackrobotics.github.io/blob/master/en/blog/_posts/2018-01-29-action-client-py.md
+# [2] https://python.hotexamples.com/examples/move_base_msgs.msg/MoveBaseActionGoal/-/python-movebaseactiongoal-class-examples.html
+# [1] Was used first, but the ActionLib is bugged for what I need on this python version. Structue/idea adopted.
+# [2] Was used to get examples of using the MoveBaseActionGoal, GoalID, and MoveBaseGoal objects.
 
-#___________________________Move Base Client Class___________________________#
+#___________________________NavigationController Class___________________________#
 
 SHUTDOWN_REASON ='Successful termination of goal set.'
 LAST_GOAL = 'NONE'
@@ -103,6 +105,8 @@ def main(goal_fp):
 
 if __name__ == '__main__':
     map_name = sys.argv[1]
-    goal_fp = os.path.join('/','home', 'conor','msc-project', 'openvslam','ros','src','navigation','goal_sets', map_name+'.csv')
+    goal_fp = os.path.join('/','home', 'conor','msc-project', 
+                            'openvslam','ros','src','navigation',
+                            'goal_sets', map_name+'.csv')
 
     main(goal_fp)

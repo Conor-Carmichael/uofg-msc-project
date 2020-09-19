@@ -1,0 +1,2 @@
+id, map, map_generator, success, total_dist, start_time, end_time
+1600546692.96, easy, openvslam, True, 47.6112789085, 1600546692.96, 1600546792.78
