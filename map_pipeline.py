@@ -44,7 +44,8 @@ def run_pcd_conversion(msg_file, pcd_dest):
 def run_pcd_processing(pcd_file, two_dim_pcd_dest):
     os.system('python post_process_pcd.py {} {}'.format(pcd_file, two_dim_pcd_dest))
 
-
+def run_create_yaml(map_name):
+    os.system('python create_yaml.py {}'.format(map_name))
 
 ########
 #      #
@@ -89,6 +90,11 @@ def main(args):
     if do.lower() == 'y':
         log_process('Post Processing PCD')
         run_pcd_processing(pcd_save, two_dim_pcd)
+
+    # do = raw_input('Ceate map yaml file? (y or n): ')
+    # if do.lower() == 'y':
+    #     log_process('Creating yaml file.')
+    #     run_create_yaml(map_id)
 
     # Finish
     return map_id

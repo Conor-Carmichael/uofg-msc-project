@@ -104,7 +104,7 @@
             <rosparam file="$(find navigation)/config/global_costmap_params.yaml" command="load" /> 
             <rosparam file="$(find navigation)/config/base_local_planner_params.yaml" command="load" />
 
-            <param name="controller_frequency" value="60" /> 
+            <param name="controller_frequency" value="120" /> 
     </node>
 
     <node pkg='rviz' type='rviz' name='rviz_launch' output='screen' />
