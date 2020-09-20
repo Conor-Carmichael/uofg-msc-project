@@ -1,0 +1,7 @@
+image: /home/conor/msc-project/openvslam/ros/src/gazebo_env/openvslam_maps/hard.pgm
+resolution: 0.100000
+origin: [-11.400000, -4.600000, 0.0]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+

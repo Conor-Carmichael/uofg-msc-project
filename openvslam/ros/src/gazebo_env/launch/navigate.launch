@@ -95,7 +95,7 @@
     <node pkg="move_base"
         type="move_base" 
         name="move_base" 
-        output="screen">
+        >
             
             <!-- Params for  move base: Costmap config -->
             <rosparam file="$(find navigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 

@@ -97,7 +97,7 @@ def status_callback(gsa, nav_tracker):
         #Check for timeout: 
         if (time.time() - nav_tracker.runs[LOOP]['start_time']) > TIMEOUT:
             rospy.loginfo(time.time() - nav_tracker.runs[LOOP]['start_time'])
-            nav_tracker.write_results()
+            nav_tracker.write_results(LOOP)
             rospy.signal_shutdown('Navigation loop timed out')
         else:
             return

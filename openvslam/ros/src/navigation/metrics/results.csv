@@ -11,3 +11,4 @@ id, map, map_generator, success, total_distance, start_time, end_time
 1600620774.4, easy, openvslam, True, 45.953674826, 1600620774.4, 1600620875.77
 1600620908.04, easy, openvslam, True, 45.3016563908, 1600620908.04, 1600621007.9
 1600621066.46, easy, ground_truth, True, 45.5085609786, 1600621066.46, 1600621167.46
+1600625053.89, hard, ground_truth, False, 22.483675126, 1600625053.89, 0.0
