@@ -33,11 +33,13 @@ class NavigationController:
         # Read in the next goal pose. Set it up, return to send goal method.
         #FORMAT:
         #x, y;
-        run_identfier = time.time()
 
+        run_identfier = time.time()
         goal_list = []
         with open(file, 'r') as goals_file:
             goals_reader = csv.reader(goals_file, delimiter=',')
+            # for i in range(5):
+
             for row_num, row in enumerate(goals_reader):
 
                 MBAG = MoveBaseActionGoal()

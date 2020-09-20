@@ -61,10 +61,7 @@
             <remap from="/projected_map" to="/map"/>
 
         </node>
-
-
     </group>
-
 
 
     <!-- If intending to use ground truth map, need to use map server node -->
