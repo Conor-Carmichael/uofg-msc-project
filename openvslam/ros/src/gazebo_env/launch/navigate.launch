@@ -5,6 +5,7 @@
 
     <arg name="map" default="easy" />
     <arg name="use_truth" default="false"/>
+    <arg name="evaluate" default="false"/>
     <arg name="create_yaml" default="false" />
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -104,9 +105,14 @@
             <rosparam file="$(find navigation)/config/global_costmap_params.yaml" command="load" /> 
             <rosparam file="$(find navigation)/config/base_local_planner_params.yaml" command="load" />
 
-            <param name="controller_frequency" value="120" /> 
+            <param name="controller_frequency" value="30" /> 
     </node>
 
     <node pkg='rviz' type='rviz' name='rviz_launch' output='screen' />
-    
+
+    <group if="$(arg evaluate)">
+        <node pkg="navigation" type="navigation_tracker.py" name="navigation_tracker" args="$(arg map) $(arg use_truth)" output="screen"/>
+        <node pkg="navigation" type="navigation_controller.py" name="navigation_controller" args="$(arg map) $(arg use_truth)" />
+    </group>
+
 </launch>

@@ -1,4 +1,4 @@
-image: src/gazebo_env/truth_files/hard.pgm
+image: /home/conor/msc-project/openvslam/ros/src/gazebo_env/truth_files/hard.pgm
 resolution: 0.100000
 origin: [-20.000000, -20.000000, 0.000000]
 negate: 0

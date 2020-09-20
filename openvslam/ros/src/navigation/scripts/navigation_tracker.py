@@ -7,13 +7,13 @@ from geometry_msgs.msg import PoseWithCovarianceStamped
 
 POSE = [None, None]
 LOOP = ""
-TIMEOUT = 500
+TIMEOUT = 240
 
 class NavigationTracker:
 
     def __init__(self, ground_truth, map_name):
         self.columns = ['id', 'map', 'map_generator', 'success', 'total_distance', 'start_time', 'end_time']
-        self.database = self.open_csv(map_name) # File to write to
+        self.database = self.open_csv() # File to write to
         self.map_name = map_name
         self.using_ground_truth = True if ground_truth.lower()=='true' else False
         self.runs = {} # Dict of the tracking dicts
@@ -34,15 +34,16 @@ class NavigationTracker:
     def append_run(self, run):
         self.runs.append(run)
 
-    def open_csv(self, M):
+    def open_csv(self):
 
-        metrics_fp = os.path.join('/','home','conor','msc-project','openvslam','ros','src','navigation','metrics',M)
+        metrics_fp = os.path.join('/','home','conor','msc-project','openvslam','ros','src','navigation','metrics', 'results.csv')
+
         if os.path.exists(metrics_fp):
-            print('\t\t*Metrics file exists, opening to append.\n{}\n'.format(metrics_fp))
+            rospy.loginfo('\t\t*Metrics file exists, opening to append.\n{}\n'.format(metrics_fp))
             metrics_csv = open(metrics_fp, 'a')
 
         else:
-            print('\t\t*Metrics file doesnt exist, creating, writing columns.\n{}\n'.format(metrics_fp))
+            rospy.loginfo('\t\t*Metrics file doesnt exist, creating, writing columns.\n{}\n'.format(metrics_fp))
             metrics_csv = open(metrics_fp, 'w')
             metrics_csv.write(', '.join(self.columns )+'\n')
 
@@ -77,7 +78,7 @@ def status_callback(gsa, nav_tracker):
     # At least one goal sent --->
     elif LOOP == "":
         # First path.
-        print('First loop received.')
+        rospy.loginfo('First loop received.')
         LOOP = gsa.status_list[-1].goal_id.id[:-2]
         d = nav_tracker.get_new_loop_dict()
         nav_tracker.runs[LOOP] = d
@@ -85,7 +86,7 @@ def status_callback(gsa, nav_tracker):
     # Loop has been initialized --->
     elif LOOP != gsa.status_list[-1].goal_id.id[:-2]:
         # New loop detected.
-        print('New loop received.')
+        rospy.loginfo('New loop received.')
         LOOP = gsa.status_list[-1].goal_id.id[:-2]
         d = nav_tracker.get_new_loop_dict()
         nav_tracker.runs[LOOP] = d
@@ -95,7 +96,7 @@ def status_callback(gsa, nav_tracker):
         # Still tracking path
         #Check for timeout: 
         if (time.time() - nav_tracker.runs[LOOP]['start_time']) > TIMEOUT:
-            print(time.time() - nav_tracker.runs[LOOP]['start_time'])
+            rospy.loginfo(time.time() - nav_tracker.runs[LOOP]['start_time'])
             nav_tracker.write_results()
             rospy.signal_shutdown('Navigation loop timed out')
         else:
@@ -105,7 +106,7 @@ def status_callback(gsa, nav_tracker):
     elif gsa.status_list[-1].status == 3 and gsa.status_list[-1].goal_id.id[-1]  == '3':
         if LOOP not in nav_tracker.written:
             # Close
-            print('Closing loop: {}'.format(LOOP))
+            rospy.loginfo('Closing loop: {}'.format(LOOP))
             nav_tracker.runs[LOOP]['success'] = True
             nav_tracker.runs[LOOP]['end_time'] = time.time()
             nav_tracker.write_results(LOOP)
@@ -151,18 +152,18 @@ if __name__ == '__main__':
         map_name = sys.argv[1]
         using_truth = sys.argv[2]
     except Exception as e:
-        print(e)
-        print('Recieved: {}'.format(', '.join(sys.argv)))
-        print('Usage: $python navigation_tracker.py map_name using_truth:=[true, false] (optional, def=300) timeout')
+        rospy.logerr(e)
+        rospy.logerr('Recieved: {}'.format(', '.join(sys.argv)))
+        rospy.logerr('Usage: $python navigation_tracker.py map_name using_truth:=[true, false] (optional, def=300) timeout')
         exit()
     
     try:
         nav_tracker = NavigationTracker(using_truth, map_name)
-        print('Listening for goals.')
+        rospy.loginfo('Listening for goals.')
     
         main(nav_tracker)
     except KeyboardInterrupt:
-        print('Shutting down, closing file.')
+        rospy.loginfo('Shutting down, closing file.')
         nav_tracker.close()
 
 
