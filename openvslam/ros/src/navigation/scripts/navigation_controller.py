@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import rospy, actionlib, os, sys, time, csv, math
+import rospy, actionlib, os, sys, time, csv, math, random
 
 from actionlib_msgs.msg import GoalStatusArray
 from  move_base_msgs.msg import MoveBaseActionGoal, MoveBaseGoal
@@ -36,6 +36,9 @@ class NavigationController:
 
         run_identfier = time.time()
         goal_list = []
+
+        clockwise = True if run_identfier % 2 == 0 else False
+        run_identfier = str(run_identfier)+ "_clock" if clockwise else "_counterclock"
         with open(file, 'r') as goals_file:
             goals_reader = csv.reader(goals_file, delimiter=',')
             # for i in range(5):
@@ -59,6 +62,13 @@ class NavigationController:
 
                 goal_list.append(MBAG)
 
+
+        #Switch directions half the time
+        if clockwise :
+            temp = goal_list[0]
+            goal_list[0] = goal_list[2]
+            goal_list[2] = temp
+        rospy.loginfo("Pathing clockwise: "+ str(clockwise))
         return goal_list
 
 

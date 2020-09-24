@@ -4,14 +4,13 @@
     <arg name="map" default="easy_loop"/>
     <arg name='bot' default='aal_bot'/>
     <arg name="paused" default="true"/>
-    <arg name="use_sim_time" default="true"/>
     <arg name="verbose" value="true" />
 
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="world_name" value="$(find gazebo_env)/worlds/$(arg map).world"/>
         <arg name="paused" value="$(arg paused)"/>
-        <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+        <arg name="use_sim_time" value="true"/>
         <arg name="verbose" value="$(arg verbose)" />
     </include>
 

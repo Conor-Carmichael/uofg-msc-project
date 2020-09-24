@@ -1,6 +1,39 @@
 <?xml version='1.0'?>
 <robot name="aal_bot">
 
+<!-- Designed with reference to Gazebo and ROS tutorials on their respective sites. -->
+
+  <material name="blue">
+    <color rgba="0 0.2 0.75 1"/>
+  </material>
+
+  <material name="white">
+    <color rgba="1 1 1 1"/>
+  </material>
+    <material name="black">
+    <color rgba="0 0 0 1"/>
+  </material>
+
+  <gazebo reference="base_link">
+    <material> Gazebo/Turquoise </material>
+  </gazebo>
+  <gazebo reference="front_left_wheel">
+    <material> Gazebo/YellowGlow </material>
+  </gazebo>
+
+  <gazebo reference="front_right_wheel">
+    <material> Gazebo/YellowGlow  </material>
+  </gazebo>
+
+  <gazebo reference="back_left_wheel">
+    <material> Gazebo/PurpleGlow </material>
+  </gazebo>
+
+  <gazebo reference="back_right_wheel">
+    <material> Gazebo/PurpleGlow </material>
+  </gazebo>
+
+
 <!-- Body of Car -->
   <link name='base_link'>
     <pose>0 0 1 0 0 0</pose>
@@ -26,6 +59,7 @@
       <geometry>
         <box size=".8 .4 .1"/>
       </geometry>
+      <material name="blue"/>
     </visual>
 
   </link>
@@ -46,6 +80,8 @@
             <geometry>
                 <cylinder radius="0.1" length="0.05"/>
             </geometry>
+            <material name="white"/>
+
         </visual>
 
         <inertial>
@@ -74,6 +110,8 @@
             <geometry>
                 <cylinder radius="0.1" length="0.05"/>
             </geometry>
+            <material name="black"/>
+
         </visual>
 
         <inertial>
@@ -102,6 +140,8 @@
             <geometry>
                 <cylinder radius="0.1" length="0.05"/>
             </geometry>
+            <material name="white"/>
+
         </visual>
         <inertial>
             <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
@@ -126,6 +166,8 @@
             <geometry>
                 <cylinder radius="0.1" length="0.05"/>
             </geometry>
+            <material name="black"/>
+
         </visual>
         <inertial>
             <origin xyz="0 0 0" rpy="0 1.5707 1.5707"/>
@@ -332,7 +374,6 @@
   <!-- GAZEBO PLUGINS -->
 
   <gazebo reference="camera_pos_x">
-      <material>Gazebo/Green</material>
       <sensor type="wideanglecamera" name="camera1">
         <update_rate>30.0</update_rate>
         <camera name="head_1">
@@ -391,7 +432,6 @@
     </gazebo>
 
     <gazebo reference="camera_pos_y">
-      <material>Gazebo/Green</material>
       <sensor type="wideanglecamera" name="camera2">
         <update_rate>30.0</update_rate>
         <camera name="head_2">
@@ -450,7 +490,6 @@
     </gazebo>
 
     <gazebo reference="camera_neg_x">
-      <material>Gazebo/Green</material>
       <sensor type="wideanglecamera" name="camera3">
         <update_rate>30.0</update_rate>
         <camera name="head_3">
@@ -509,7 +548,6 @@
     </gazebo>
 
     <gazebo reference="camera_neg_y">
-      <material>Gazebo/Green</material>
       <sensor type="wideanglecamera" name="camera4">
         <update_rate>30.0</update_rate>
         <camera name="head_4">

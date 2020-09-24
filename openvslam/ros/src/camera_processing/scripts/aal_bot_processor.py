@@ -2,7 +2,6 @@
 from __future__ import print_function
 
 import roslib, os
-# roslib.load_manifest('my_package')
 
 from std_msgs.msg import String
 from sensor_msgs.msg import Image

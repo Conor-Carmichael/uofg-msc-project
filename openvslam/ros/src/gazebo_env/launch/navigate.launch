@@ -93,6 +93,7 @@
         type="move_base" 
         name="move_base" 
         >
+            <!-- Implementation for all parameter files is initially derived from the ros navigation tutorial.  -->
             
             <!-- Params for  move base: Costmap config -->
             <rosparam file="$(find navigation)/config/costmap_common_params.yaml" command="load" ns="global_costmap" /> 
