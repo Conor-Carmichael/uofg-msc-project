@@ -1,4 +1,4 @@
-image: /home/conor/msc-project/openvslam/ros/src/gazebo_env/openvslam_maps/hard.pgm
+image: hard.pgm
 resolution: 0.100000
 origin: [-15.200000, -6.500000, 0.0]
 negate: 0

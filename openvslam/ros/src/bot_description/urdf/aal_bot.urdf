@@ -372,6 +372,7 @@
 
 
   <!-- GAZEBO PLUGINS -->
+  <!-- Reference for wideanglecamer calibration: https://github.com/ros-simulation/gazebo_ros_pkgs/issues/758 -->
 
   <gazebo reference="camera_pos_x">
       <sensor type="wideanglecamera" name="camera1">
@@ -394,26 +395,17 @@
           </clip>
 
           <lens>
-            <!-- type element is mandatory -->
             <type>custom</type>
             <!-- manually defined mapping function r = c1*f*fun(theta/c2 + c3) -->
             <!-- More information here: https://en.wikipedia.org/wiki/Fisheye_lens#Mapping_function -->
             <custom_function>
               <c1>1.07</c1>
-              <!-- linear scaling -->
               <c2>4</c2>
-              <!-- angle scaling -->
               <f>1.0</f>
-              <!-- one more scaling parameter -->
               <fun>tan</fun>
-              <!-- one of sin,tan,id -->
             </custom_function>
-            <!-- if it is set to `true` your horizontal FOV will ramain as defined -->
-            <!-- othervise it depends on lens type and custom function, if there is one -->
             <scale_to_hfov>true</scale_to_hfov>
-            <!-- clip everything that is outside of this angle -->
             <cutoff_angle>3.1415</cutoff_angle>
-            <!-- resolution of the cubemap texture, the highter it is - the sharper is your image -->
             <env_texture_size>512</env_texture_size>
           </lens>
 
@@ -437,7 +429,6 @@
         <camera name="head_2">
 
           <horizontal_fov>1.5708</horizontal_fov>
-          <!-- <horizontal_fov>2.0944</horizontal_fov> -->
 
           <image>
             <width>960</width>
@@ -452,26 +443,15 @@
           </clip>
 
           <lens>
-            <!-- type element is mandatory -->
             <type>custom</type>
-            <!-- manually defined mapping function r = c1*f*fun(theta/c2 + c3) -->
-            <!-- More information here: https://en.wikipedia.org/wiki/Fisheye_lens#Mapping_function -->
             <custom_function>
               <c1>1.07</c1>
-              <!-- linear scaling -->
               <c2>4</c2>
-              <!-- angle scaling -->
               <f>1.0</f>
-              <!-- one more scaling parameter -->
               <fun>tan</fun>
-              <!-- one of sin,tan,id -->
             </custom_function>
-            <!-- if it is set to `true` your horizontal FOV will ramain as defined -->
-            <!-- othervise it depends on lens type and custom function, if there is one -->
             <scale_to_hfov>true</scale_to_hfov>
-            <!-- clip everything that is outside of this angle -->
             <cutoff_angle>3.1415</cutoff_angle>
-            <!-- resolution of the cubemap texture, the highter it is - the sharper is your image -->
             <env_texture_size>512</env_texture_size>
           </lens>
 
@@ -495,7 +475,6 @@
         <camera name="head_3">
 
           <horizontal_fov>1.5708</horizontal_fov>
-          <!-- <horizontal_fov>2.0944</horizontal_fov> -->
 
           <image>
             <width>960</width>
@@ -510,26 +489,15 @@
           </clip>
 
           <lens>
-            <!-- type element is mandatory -->
             <type>custom</type>
-            <!-- manually defined mapping function r = c1*f*fun(theta/c2 + c3) -->
-            <!-- More information here: https://en.wikipedia.org/wiki/Fisheye_lens#Mapping_function -->
             <custom_function>
               <c1>1.07</c1>
-              <!-- linear scaling -->
               <c2>4</c2>
-              <!-- angle scaling -->
               <f>1.0</f>
-              <!-- one more scaling parameter -->
               <fun>tan</fun> 
-              <!-- one of sin,tan,id -->
             </custom_function>
-            <!-- if it is set to `true` your horizontal FOV will ramain as defined -->
-            <!-- othervise it depends on lens type and custom function, if there is one -->
             <scale_to_hfov>true</scale_to_hfov>
-            <!-- clip everything that is outside of this angle -->
             <cutoff_angle>3.1415</cutoff_angle>
-            <!-- resolution of the cubemap texture, the highter it is - the sharper is your image -->
             <env_texture_size>512</env_texture_size>
           </lens>
 
@@ -553,7 +521,6 @@
         <camera name="head_4">
 
           <horizontal_fov>1.5708</horizontal_fov>
-          <!-- <horizontal_fov>2.0944</horizontal_fov> -->
 
           <image>
             <width>960</width>
@@ -568,26 +535,15 @@
           </clip>
 
           <lens>
-            <!-- type element is mandatory -->
             <type>custom</type>
-            <!-- manually defined mapping function r = c1*f*fun(theta/c2 + c3) -->
-            <!-- More information here: https://en.wikipedia.org/wiki/Fisheye_lens#Mapping_function -->
             <custom_function>
               <c1>1.07</c1>
-              <!-- linear scaling -->
               <c2>4</c2>
-              <!-- angle scaling -->
               <f>1.0</f>
-              <!-- one more scaling parameter -->
               <fun>tan</fun>
-              <!-- one of sin,tan,id -->
             </custom_function>
-            <!-- if it is set to `true` your horizontal FOV will ramain as defined -->
-            <!-- othervise it depends on lens type and custom function, if there is one -->
             <scale_to_hfov>true</scale_to_hfov>
-            <!-- clip everything that is outside of this angle -->
             <cutoff_angle>3.1415</cutoff_angle>
-            <!-- resolution of the cubemap texture, the highter it is - the sharper is your image -->
             <env_texture_size>512</env_texture_size>
           </lens>
 
