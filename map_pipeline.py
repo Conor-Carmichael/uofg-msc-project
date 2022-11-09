@@ -22,7 +22,6 @@ def create_id(args):
     return "_".join(args[1:])
 
 def log_process(pid):
-    #This is hilariously python
     print("""
         #################################
         #
